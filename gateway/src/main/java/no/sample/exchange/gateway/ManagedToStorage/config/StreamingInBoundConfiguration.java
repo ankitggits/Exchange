@@ -1,7 +1,8 @@
-package no.sample.exchange.gateway.config;
+package no.sample.exchange.gateway.ManagedToStorage.config;
 
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelSftp.LsEntry;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.annotation.InboundChannelAdapter;
@@ -23,11 +24,8 @@ import java.io.InputStream;
  */
 public class StreamingInBoundConfiguration {
 
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(StreamingInBoundConfiguration.class)
-                .web(false)
-                .run(args);
-    }
+    @Autowired
+    SessionFactory<ChannelSftp.LsEntry> sftpSessionFactory;
 
     @Bean
     @InboundChannelAdapter(channel = "stream")
@@ -39,17 +37,6 @@ public class StreamingInBoundConfiguration {
     }
     
     @Bean
-    public SessionFactory<LsEntry> sftpSessionFactory() {
-        DefaultSftpSessionFactory factory = new DefaultSftpSessionFactory(true);
-        factory.setHost("10.219.238.132");
-        factory.setPort(22);
-        factory.setUser("VIPPS001S");
-        factory.setPassword("Norway123");
-        factory.setAllowUnknownKeys(true);
-        return new CachingSessionFactory<LsEntry>(factory);
-    }
-
-    @Bean
     @Transformer(inputChannel = "stream", outputChannel = "data")
     public org.springframework.integration.transformer.Transformer transformer() {
         return new StreamTransformer();
@@ -57,7 +44,7 @@ public class StreamingInBoundConfiguration {
 
     @Bean
     public SftpRemoteFileTemplate template() {
-        return new SftpRemoteFileTemplate(sftpSessionFactory());
+        return new SftpRemoteFileTemplate(sftpSessionFactory);
     }
 
 }

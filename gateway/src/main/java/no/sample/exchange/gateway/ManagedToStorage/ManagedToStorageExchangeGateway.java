@@ -1,4 +1,4 @@
-package no.sample.exchange.gateway.inbound;
+package no.sample.exchange.gateway.ManagedToStorage;
 
 /**
  * Created by Ankit on 18-12-2016.
