@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/integration
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/sftp
+        http://www.springframework.org/schema/integration/sftp/spring-integration-sftp-2.2.xsd
+        http://www.springframework.org/schema/integration/file
+        http://www.springframework.org/schema/integration/file/spring-integration-file-2.2.xsd">
+
+    <bean id="sftpSessionFactory" class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
+        <property name="host" value="10.219.238.132"/>
+        <property name="password" value="Norway123"/>
+        <!--<property name="privateKey" value="classpath:keys/sftp_rsa"/>
+        <property name="privateKeyPassphrase" value="password"/>-->
+        <property name="port" value="22"/>
+        <property name="user" value="VIPPS001S"/>
+        <property name="allowUnknownKeys" value="true"/>
+    </bean>
+
+    <import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>
+
+    <import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>
+
+</beans>

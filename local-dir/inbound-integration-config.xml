@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/sftp http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
+        http://www.springframework.org/schema/integration/http http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
+
+    <int-sftp:inbound-channel-adapter id="sftpInbondAdapter"
+                                      auto-startup="true"
+                                      channel="managed-inbound-channel"
+                                      session-factory="sftpSessionFactory"
+                                      local-directory="file:local-dir"
+                                      remote-directory="Consumer"
+                                      auto-create-local-directory="true"
+                                      delete-remote-files="true"
+                                      filename-regex=".*\.txt$">
+        <int:poller fixed-rate="5000" max-messages-per-poll="1"/>
+    </int-sftp:inbound-channel-adapter>
+
+    <int:service-activator input-channel="managed-inbound-channel" output-channel="storage-http-request-channel" ref="inboundLoggingService" method="log">
+        <int:poller fixed-delay="5000" />
+    </int:service-activator>
+
+    <int:chain input-channel="storage-http-request-channel" output-channel="storage-http-reply-channel">
+        <int:transformer ref="inboundTransformer"/>
+        <!--<int:header-enricher>
+            <int:header name="version" value="2015-02-21"/>
+            <int:header name="date" value="Tue, 12 Dec 2016 15:28:13 GMT"/>
+            <int:header name="blob-content-disposition" value="attachment; filename='test.txt'"/>
+            <int:header name="blob-type" value="BlockBlob"/>
+        </int:header-enricher>-->
+        <int-http:outbound-gateway id="gateway"
+                                   encode-uri="false" url="https://vaapstorage.blob.core.windows.net/teller/{blobName}?{ssh-string}"
+                                   http-method="PUT" header-mapper="headerMapper" >
+            <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
+            <int-http:uri-variable name="blobName" expression="headers.blobName"/>
+        </int-http:outbound-gateway>
+    </int:chain>
+
+    <bean id="headerMapper" class="org.springframework.integration.http.support.DefaultHttpHeaderMapper">
+        <property name="outboundHeaderNames" value="HTTP_REQUEST_HEADERS, version, date, blob-content-disposition, blob-type" />
+        <property name="userDefinedHeaderPrefix" value="X-ms-" />
+    </bean>
+
+    <int:service-activator input-channel="storage-http-reply-channel" ref="inboundArchiver" method="archive"/>
+
+
+    <int:channel id="managed-inbound-channel"><int:queue/></int:channel>
+
+    <int:channel id="storage-http-request-channel"/>
+
+    <int:channel id="storage-http-reply-channel"/>
+
+</beans>

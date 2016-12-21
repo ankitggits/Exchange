@@ -1,7 +1,6 @@
-package no.sample.exchange.gateway.ManagedToStorage.config;
+package config;
 
 import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.ChannelSftp.LsEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -11,10 +10,8 @@ import org.springframework.integration.annotation.Gateway;
 import org.springframework.integration.annotation.MessagingGateway;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.file.FileNameGenerator;
-import org.springframework.integration.file.remote.session.CachingSessionFactory;
 import org.springframework.integration.file.remote.session.SessionFactory;
 import org.springframework.integration.sftp.outbound.SftpMessageHandler;
-import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHandler;
 
