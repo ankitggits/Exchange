@@ -2,6 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
        xmlns:int-http="http://www.springframework.org/schema/integration/http"
@@ -11,43 +12,44 @@
         http://www.springframework.org/schema/util/spring-util.xsd
 		http://www.springframework.org/schema/integration
 		http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/xml
+        http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd
 		http://www.springframework.org/schema/integration/sftp
 		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
         http://www.springframework.org/schema/integration/http
         http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
 
-   <int:channel id="storage-request-channel"/>
+    <import resource="classpath:integration-config/env/outbound/ledger-outbound-integration-config.xml"></import>
 
-   <int:channel id="storage-response-channel"><int:queue capacity="10"/></int:channel>
+    <import resource="classpath:integration-config/env/outbound/invoice-outbound-integration-config.xml"></import>
 
-   <int:inbound-channel-adapter channel="storage-request-channel" expression="''">
-      <int:poller fixed-delay="5000"></int:poller>
-   </int:inbound-channel-adapter>
+    <import resource="classpath:integration-config/env/outbound/promatch-outbound-integration-config.xml"></import>
 
+    <int:channel id="outbound-jaxb-channel"/>
 
+    <int:channel id="outbound-logger-channel"/>
 
-   <int:chain input-channel="storage-request-channel" output-channel="storage-response-channel">
-      <int:header-enricher>
-            <int:header name="version" value="2015-02-21"/>
-            <int:header name="date" value="Tue, 12 Dec 2016 15:28:13 GMT"/>
-        </int:header-enricher>
-      <int-http:outbound-gateway id="httpInboundGateway"
-                                 encode-uri="false"
-                                 url="https://vaapstorage.blob.core.windows.net/ledger?{ssh-string-list}"
-                                 http-method="GET"
-                                 header-mapper="headerMapper"
-                                 reply-timeout="50000">
-         <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
-      </int-http:outbound-gateway>
-   </int:chain>
+    <int:channel id="blob-enricher-channel"/>
 
-   <int:service-activator input-channel="storage-response-channel" ref="blobListToFilesTransformer" method="transform">
-      <int:poller fixed-delay="5000" />
-   </int:service-activator>
+    <int:channel id="outbound-router-channel"/>
+
+    <!--<int-xml:unmarshalling-transformer
+            id="unmarshallingTransformer"
+            unmarshaller="jaxbunmarshaller" input-channel="outbound-jaxb-channel" output-channel="outbound-logger-channel"
+    />-->
+
+    <int:transformer input-channel="outbound-jaxb-channel" output-channel="blob-enricher-channel" ref="outboundLoggingService" method="transform"/>
+
+    <int:transformer input-channel="blob-enricher-channel" output-channel="outbound-router-channel" ref="blobEnricherTransformer" method="transform"/>
 
     <!--<int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
                                        channel="sftp-outbound-channel" charset="UTF-8" remote-directory="/Producer"
                                        remote-file-separator="/"/>-->
+
+
+    <bean id="jaxbunmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="packagesToScan" value="no.sample.exchange.gateway.outbound.model" />
+    </bean>
 
 </beans>

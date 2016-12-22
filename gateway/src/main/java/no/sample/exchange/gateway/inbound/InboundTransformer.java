@@ -22,8 +22,6 @@ public class InboundTransformer {
 
     @Transformer
     public Message<?> createRequestMessage(Message<File> msg) {
-        System.setProperty("proxyHost", "proxy");
-        System.setProperty("proxyPort", "88");
         File file = (File) msg.getPayload();
         try {
             InputStream targetStream = new FileInputStream(file);

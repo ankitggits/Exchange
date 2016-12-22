@@ -14,6 +14,8 @@ import org.springframework.integration.sftp.session.DefaultSftpSessionFactory;
 public class ExchangeApplication {
 
 	public static void main(String[] args) {
+		System.setProperty("proxyHost", "proxy");
+		System.setProperty("proxyPort", "88");
 		 new SpringApplicationBuilder(ExchangeApplication.class)
          .web(false)
          .run(args);
