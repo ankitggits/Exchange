@@ -23,11 +23,20 @@
                                       local-directory="file:local-dir"
                                       remote-directory="Consumer"
                                       auto-create-local-directory="true"
-                                      delete-remote-files="true"
-
-                                      >
+                                      delete-remote-files="true">
         <int:poller fixed-rate="5000" max-messages-per-poll="1"/>
     </int-sftp:inbound-channel-adapter>
+
+    <!--<int-sftp:inbound-streaming-channel-adapter id="sftpInbound"
+                                                channel="managed-inbound-channel"
+                                                session-factory="sftpSessionFactory"
+                                                filter="filter"
+                                                remote-file-separator="/"
+                                                comparator="comparator"
+                                                max-fetch-size="1"
+                                                remote-directory-expression="'Consumer'">
+        <int:poller fixed-rate="5000" />
+    </int-sftp:inbound-streaming-channel-adapter>-->
 
     <int:service-activator input-channel="managed-inbound-channel" output-channel="storage-http-request-channel" ref="inboundLoggingService" method="log">
         <int:poller fixed-delay="5000" />
@@ -35,30 +44,17 @@
 
     <int:chain input-channel="storage-http-request-channel" output-channel="storage-http-reply-channel">
         <int:transformer ref="inboundTransformer"/>
-        <!--<int:header-enricher>
-            <int:header name="version" value="2015-02-21"/>
-            <int:header name="date" value="Tue, 12 Dec 2016 15:28:13 GMT"/>
-            <int:header name="blob-content-disposition" value="attachment; filename='test.txt'"/>
-            <int:header name="blob-type" value="BlockBlob"/>
-        </int:header-enricher>-->
         <int-http:outbound-gateway id="gateway"
                                    encode-uri="false"
                                    url="https://vaapstorage.blob.core.windows.net/teller/{blobName}?{ssh-string}"
                                    http-method="PUT"
-                                   header-mapper="headerMapper"
-                                   message-converters="converters">
+                                   header-mapper="headerMapper">
             <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
             <int-http:uri-variable name="blobName" expression="headers.blobName"/>
         </int-http:outbound-gateway>
     </int:chain>
 
-    <bean id="headerMapper" class="org.springframework.integration.http.support.DefaultHttpHeaderMapper">
-        <property name="outboundHeaderNames" value="HTTP_REQUEST_HEADERS, version, date, blob-content-disposition, blob-type" />
-        <property name="userDefinedHeaderPrefix" value="X-ms-" />
-    </bean>
-
     <int:service-activator input-channel="storage-http-reply-channel" ref="inboundArchiver" method="archive"/>
-
 
     <int:channel id="managed-inbound-channel"><int:queue/></int:channel>
 
@@ -66,11 +62,7 @@
 
     <int:channel id="storage-http-reply-channel"/>
 
-    <util:list id="converters">
-        <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
-        <bean class="org.springframework.http.converter.FormHttpMessageConverter" />
-        <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
-        <bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter" />
-    </util:list>
-
 </beans>
+
+
+        <!--filename-regex=".*\.txt$"-->

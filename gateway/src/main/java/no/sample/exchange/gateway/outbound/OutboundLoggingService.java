@@ -10,8 +10,8 @@ import java.io.File;
 @Component(value = "outboundLoggingService")
 public class OutboundLoggingService {
 
-    public void log(File file){
+    public File log(File file){
         System.out.println("received a file with name:::"+ file.getName());
-        //return file;
+        return file;
     }
 }

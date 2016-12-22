@@ -12,6 +12,7 @@
     <artifactId>gateway</artifactId>
 
     <dependencies>
+
         <dependency>
             <groupId>no.sample.exchange</groupId>
             <artifactId>core</artifactId>
@@ -29,7 +30,6 @@
             <artifactId>commons-fileupload</artifactId>
             <version>1.2</version>
         </dependency>
-
 
     </dependencies>
 

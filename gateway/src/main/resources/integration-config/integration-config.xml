@@ -24,7 +24,13 @@
         <property name="allowUnknownKeys" value="true"/>
     </bean>
 
-    <import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>
+    <bean id="headerMapper" class="org.springframework.integration.http.support.DefaultHttpHeaderMapper">
+        <property name="outboundHeaderNames" value="HTTP_REQUEST_HEADERS, version, date, blob-content-disposition, blob-type, charset" />
+        <property name="inboundHeaderNames" value="HTTP_RESPONSE_HEADERS, version, date, blob-content-disposition, blob-type, charset"/>
+        <property name="userDefinedHeaderPrefix" value="X-ms-" />
+    </bean>
+
+    <!--<import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>-->
 
     <import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>
 

@@ -2,25 +2,52 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
-       xmlns:file="http://www.springframework.org/schema/integration/file"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/integration
-        http://www.springframework.org/schema/integration/spring-integration.xsd
-        http://www.springframework.org/schema/integration/sftp
-        http://www.springframework.org/schema/integration/sftp/spring-integration-sftp-2.2.xsd
-        http://www.springframework.org/schema/integration/file
-        http://www.springframework.org/schema/integration/file/spring-integration-file-2.2.xsd">
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/sftp
+		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
+        http://www.springframework.org/schema/integration/http
+        http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
 
-   <!-- <int:channel id="sftpChannel"/>
+   <int:channel id="storage-request-channel"/>
+
+   <int:channel id="storage-response-channel"><int:queue capacity="10"/></int:channel>
+
+   <int:inbound-channel-adapter channel="storage-request-channel" expression="''">
+      <int:poller fixed-delay="5000"></int:poller>
+   </int:inbound-channel-adapter>
 
 
 
-    <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
-                                       channel="sftpChannel" charset="UTF-8" remote-directory="/Producer"
+   <int:chain input-channel="storage-request-channel" output-channel="storage-response-channel">
+      <int:header-enricher>
+            <int:header name="version" value="2015-02-21"/>
+            <int:header name="date" value="Tue, 12 Dec 2016 15:28:13 GMT"/>
+        </int:header-enricher>
+      <int-http:outbound-gateway id="httpInboundGateway"
+                                 encode-uri="false"
+                                 url="https://vaapstorage.blob.core.windows.net/ledger?{ssh-string-list}"
+                                 http-method="GET"
+                                 header-mapper="headerMapper"
+                                 reply-timeout="50000">
+         <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
+      </int-http:outbound-gateway>
+   </int:chain>
+
+   <int:service-activator input-channel="storage-response-channel" ref="blobListToFilesTransformer" method="transform">
+      <int:poller fixed-delay="5000" />
+   </int:service-activator>
+
+    <!--<int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
+                                       channel="sftp-outbound-channel" charset="UTF-8" remote-directory="/Producer"
                                        remote-file-separator="/"/>-->
 
 </beans>
