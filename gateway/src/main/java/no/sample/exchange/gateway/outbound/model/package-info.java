@@ -5,5 +5,5 @@
 // Generated on: 2016.12.22 at 04:52:05 PM CET 
 //
 
-@javax.xml.bind.annotation.XmlSchema(namespace = "no.sample.exchange.gateway.outbound.model.EnumerationResults", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package no.sample.exchange.gateway.outbound.model;
