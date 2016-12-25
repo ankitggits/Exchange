@@ -2,21 +2,43 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
        xmlns:int-http="http://www.springframework.org/schema/integration/http"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/util
-        http://www.springframework.org/schema/util/spring-util.xsd
 		http://www.springframework.org/schema/integration
 		http://www.springframework.org/schema/integration/spring-integration.xsd
-		http://www.springframework.org/schema/integration/sftp
-		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
         http://www.springframework.org/schema/integration/http
         http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
+    <int:channel id="storage-promatch-request-channel"/>
 
+    <int:inbound-channel-adapter channel="storage-promatch-request-channel" expression="''">
+        <int:poller fixed-delay="13000"></int:poller>
+    </int:inbound-channel-adapter>
 
+    <int:chain input-channel="storage-promatch-request-channel" output-channel="outbound-filter-channel">
+        <int:header-enricher>
+            <int:header name="version" value="2015-02-21"/>
+            <int:header name="date" value="Tue, 12 Dec 2016 15:28:13 GMT"/>
+            <int:header name="Content-Type" value="text/xml"/>
+        </int:header-enricher>
 
+        <int-http:outbound-gateway id="httpInboundGateway"
+                                   encode-uri="false"
+                                   url="https://vaapstorage.blob.core.windows.net/promatch?{ssh-string-list}"
+                                   http-method="GET"
+                                   header-mapper="headerMapper"
+                                   reply-timeout="50000"
+                                   expected-response-type="no.sample.exchange.gateway.outbound.model.EnumerationResults">
+
+            <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
+        </int-http:outbound-gateway>
+    </int:chain>
+
+    <int:channel id="blob-promatch-transformer-channel"/>
+    <int:transformer input-channel="blob-promatch-transformer-channel" output-channel="outbound-sftp-channel" ref="promatchFileNameTransformer"/>
+
+    <bean id="promatchFileNameTransformer" class="no.sample.exchange.gateway.outbound.transformer.FileNameTransformer">
+        <property name="suffix" value="-promatch-hello"/>
+    </bean>
 </beans>

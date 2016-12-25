@@ -1,52 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
-       xmlns:int-xml="http://www.springframework.org/schema/integration/xml"
-       xmlns:util="http://www.springframework.org/schema/util"
        xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
-       xmlns:int-http="http://www.springframework.org/schema/integration/http"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/util
         http://www.springframework.org/schema/util/spring-util.xsd
 		http://www.springframework.org/schema/integration
 		http://www.springframework.org/schema/integration/spring-integration.xsd
-		http://www.springframework.org/schema/integration/xml
-        http://www.springframework.org/schema/integration/xml/spring-integration-xml.xsd
 		http://www.springframework.org/schema/integration/sftp
-		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
-        http://www.springframework.org/schema/integration/http
-        http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
+		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd">
 
+    <import resource="classpath:integration-config/env/outbound/ledger-outbound-integration-config.xml"/>
 
-    <import resource="classpath:integration-config/env/outbound/ledger-outbound-integration-config.xml"></import>
+    <import resource="classpath:integration-config/env/outbound/invoice-outbound-integration-config.xml"/>
 
-    <import resource="classpath:integration-config/env/outbound/invoice-outbound-integration-config.xml"></import>
-
-    <import resource="classpath:integration-config/env/outbound/promatch-outbound-integration-config.xml"></import>
+    <import resource="classpath:integration-config/env/outbound/promatch-outbound-integration-config.xml"/>
 
     <int:channel id="outbound-filter-channel"/>
 
     <int:channel id="outbound-logger-channel"/>
 
-    <int:channel id="blob-enricher-channel"/>
+    <int:channel id="outbound-enricher-channel"/>
 
-    <int:channel id="outbound-router-channel"/>
+    <int:channel id="outbound-router-channel">
+        <int:interceptors>
+            <int:wire-tap channel="loggingChannel1"/>
+        </int:interceptors>
+    </int:channel>
 
-    <int:filter input-channel="outbound-filter-channel" output-channel="blob-enricher-channel" expression="@configurationService.isPayloadAccepted(payload)"/>
+    <int:channel id="outbound-sftp-channel"/>
 
-    <int:transformer input-channel="blob-enricher-channel" output-channel="outbound-logger-channel" ref="blobEnricherTransformer" method="transform"/>
+    <int:filter input-channel="outbound-filter-channel" output-channel="outbound-enricher-channel" ref="blobPresenceSelector"/>
 
-    <int:transformer input-channel="outbound-logger-channel" output-channel="blob-enricher-channel" ref="outboundLoggingService" method="transform"/>
+    <int:transformer input-channel="outbound-enricher-channel" output-channel="outbound-logger-channel" ref="blobEnricherTransformer"/>
 
+    <int:transformer input-channel="outbound-logger-channel" output-channel="outbound-router-channel" ref="outboundLoggingService"/>
 
+    <int:logging-channel-adapter id="loggingChannel1"
+            expression="'Value of header foo_bar: '.concat(headers)"
+            level="DEBUG"/>
 
-    <!--<int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
+    <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
+
+    <bean id="customOutboundRouter" class="no.sample.exchange.gateway.router.SourceTypeRouter">
+        <property name="sourceTypePrefixChannelMap" ref="sourceTypePrefixChannelMap"/>
+    </bean>
+
+    <util:map id="sourceTypePrefixChannelMap">
+        <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
+        <entry key="invoice" value-ref="blob-invoice-transformer-channel"/>
+        <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
+    </util:map>
+
+    <int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiverService" method="archive">
+    </int:service-activator>
+<!--    <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
                                        channel="sftp-outbound-channel" charset="UTF-8" remote-directory="/Producer"
                                        remote-file-separator="/"/>-->
-
-
-
 
 </beans>

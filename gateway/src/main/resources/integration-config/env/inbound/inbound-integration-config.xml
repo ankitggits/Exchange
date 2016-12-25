@@ -16,6 +16,10 @@
         http://www.springframework.org/schema/integration/http
         http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
+    <int:channel id="managed-inbound-channel"><int:queue/></int:channel>
+
+    <int:channel id="storage-http-reply-channel"/>
+
     <int-sftp:inbound-channel-adapter id="sftpInbondAdapter"
                                       auto-startup="true"
                                       channel="managed-inbound-channel"
@@ -42,27 +46,24 @@
         <int:poller fixed-delay="5000" />
     </int:service-activator>
 
-    <int:chain input-channel="storage-http-request-channel" output-channel="storage-http-reply-channel">
-        <int:transformer ref="inboundTransformer"/>
-        <int-http:outbound-gateway id="gateway"
-                                   encode-uri="false"
-                                   url="https://vaapstorage.blob.core.windows.net/teller/{blobName}?{ssh-string}"
-                                   http-method="PUT"
-                                   header-mapper="headerMapper">
-            <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
-            <int-http:uri-variable name="blobName" expression="headers.blobName"/>
-        </int-http:outbound-gateway>
-    </int:chain>
-
     <int:service-activator input-channel="storage-http-reply-channel" ref="inboundArchiver" method="archive"/>
 
-    <int:channel id="managed-inbound-channel"><int:queue/></int:channel>
+    <import resource="classpath:integration-config/env/inbound/teller-inbound-integration-config.xml"/>
 
-    <int:channel id="storage-http-request-channel"/>
+    <import resource="classpath:integration-config/env/inbound/invoice-inbound-integration-config.xml"/>
 
-    <int:channel id="storage-http-reply-channel"/>
+    <import resource="classpath:integration-config/env/inbound/cards-inbound-integration-config.xml"/>
+
+    <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
+
+    <bean id="customOutboundRouter" class="no.sample.exchange.gateway.router.SourceTypeRouter">
+        <property name="sourceTypePrefixChannelMap" ref="sourceTypePrefixChannelMap"/>
+    </bean>
+
+    <util:map id="sourceTypePrefixChannelMap">
+        <entry key="teller" value-ref="teller-storage-http-request-channel"/>
+        <entry key="invoice" value-ref="invoice-storage-http-request-channel"/>
+        <entry key="cards" value-ref="cards-storage-http-request-channel"/>
+    </util:map>
 
 </beans>
-
-
-        <!--filename-regex=".*\.txt$"-->

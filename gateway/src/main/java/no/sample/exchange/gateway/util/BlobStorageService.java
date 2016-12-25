@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -27,16 +28,20 @@ public class BlobStorageService {
     @Autowired
     ConfiguraitonService configuraitonService;
 
-    public InputStream getBlob(String url){
-        RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    RestTemplate restTemplate;
+
+    public BlobInfo getBlob(String serviceEndpoint, String containerName, String blobName){
+        BlobInfo blobInfo = new BlobInfo();
+        String url = serviceEndpoint.concat(containerName).concat("/").concat(blobName).concat("?").concat(configuraitonService.getSshString());
         try {
-            url+="?"+configuraitonService.getSshString();
-            ResponseEntity<String> entity = restTemplate.exchange(new URI(url), HttpMethod.GET, null,String.class);
-            System.out.println(entity.getBody());
+            ResponseEntity<byte[]> entity = restTemplate.exchange(new URI(url), HttpMethod.GET, null,byte[].class);
+            blobInfo.setBytes(entity.getBody());
+            blobInfo.setBlobMetadata(new BlobInfo.BlobMeta(blobName));
+            return blobInfo;
         } catch (URISyntaxException e) {
             e.printStackTrace();
+            throw new RuntimeException("file not found");
         }
-
-        return null;
     }
 }

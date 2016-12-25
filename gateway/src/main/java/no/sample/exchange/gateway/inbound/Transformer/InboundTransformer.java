@@ -1,4 +1,4 @@
-package no.sample.exchange.gateway.inbound;
+package no.sample.exchange.gateway.inbound.Transformer;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpEntity;
@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.integration.annotation.Transformer;
 import org.springframework.integration.support.MessageBuilder;
+import org.springframework.integration.transformer.AbstractTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -18,11 +19,11 @@ import java.net.URI;
  * Created by AB75448 on 20.12.2016.
  */
 @Component("inboundTransformer")
-public class InboundTransformer {
+public class InboundTransformer extends AbstractTransformer{
 
-    @Transformer
-    public Message<?> createRequestMessage(Message<File> msg) {
-        File file = (File) msg.getPayload();
+    @Override
+    protected Message<byte[]> doTransform(Message<?> message) throws Exception {
+        File file = (File) message.getPayload();
         try {
             InputStream targetStream = new FileInputStream(file);
             byte[] bytes = IOUtils.toByteArray(targetStream);
@@ -40,7 +41,6 @@ public class InboundTransformer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    return null;
+        return null;
     }
-
 }

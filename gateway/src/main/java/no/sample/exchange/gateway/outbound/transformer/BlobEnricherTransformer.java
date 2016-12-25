@@ -1,14 +1,18 @@
-package no.sample.exchange.gateway.outbound;
+package no.sample.exchange.gateway.outbound.transformer;
 
 import no.sample.exchange.gateway.outbound.model.EnumerationResults;
+import no.sample.exchange.gateway.util.BlobInfo;
 import no.sample.exchange.gateway.util.BlobStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.transformer.AbstractTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,15 +25,17 @@ public class BlobEnricherTransformer extends AbstractTransformer{
     @Autowired
     BlobStorageService storageService;
 
-    public Message<?> doTransform(Message message){
+    public Message<List<BlobInfo>> doTransform(Message message){
         EnumerationResults results = (EnumerationResults) message.getPayload();
         Iterator<EnumerationResults.Blobs.Blob> blobsIterator = results.getBlobs().getBlob().iterator();
+        List<BlobInfo> blobInfos = new ArrayList<BlobInfo>();
         while(blobsIterator.hasNext()){
             EnumerationResults.Blobs.Blob blob = blobsIterator.next();
-            String url = results.getServiceEndpoint().concat(results.getContainerName()).concat("/").concat(blob.getName());
-            storageService.getBlob(url);
+            BlobInfo blobInfo = storageService.getBlob(results.getServiceEndpoint(), results.getContainerName(), blob.getName());
+            blobInfo.getBlobMetadata().setUploadedDate(blob.getProperties().getLastModified());
+            blobInfos.add(blobInfo);
         }
-        return message;
+        return MessageBuilder.withPayload(blobInfos).build();
     }
 
 }
