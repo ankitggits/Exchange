@@ -66,7 +66,6 @@ public class SftpTestUtils {
 
 				@Override
 				public Void doInSession(Session<LsEntry> session) throws IOException {
-					// TODO: avoid DFAs with Spring 4.1 (INT-3412)
 					ChannelSftp channel = (ChannelSftp) new DirectFieldAccessor(new DirectFieldAccessor(session)
 							.getPropertyValue("targetSession")).getPropertyValue("channel");
 					for (int i = 0; i < fileNames.length; i++) {

@@ -46,8 +46,6 @@
         <int:poller fixed-delay="5000" />
     </int:service-activator>
 
-    <int:service-activator input-channel="storage-http-reply-channel" ref="inboundArchiver" method="archive"/>
-
     <import resource="classpath:integration-config/env/inbound/teller-inbound-integration-config.xml"/>
 
     <import resource="classpath:integration-config/env/inbound/invoice-inbound-integration-config.xml"/>
@@ -56,7 +54,7 @@
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
-    <bean id="customOutboundRouter" class="no.sample.exchange.gateway.router.SourceTypeRouter">
+    <bean id="customOutboundRouter" class="no.sample.exchange.core.gateway.router.SourceTypeRouter">
         <property name="sourceTypePrefixChannelMap" ref="sourceTypePrefixChannelMap"/>
     </bean>
 
@@ -65,5 +63,7 @@
         <entry key="invoice" value-ref="invoice-storage-http-request-channel"/>
         <entry key="cards" value-ref="cards-storage-http-request-channel"/>
     </util:map>
+
+    <int:service-activator input-channel="storage-http-reply-channel" ref="localFileArchiver" method="archive"/>
 
 </beans>

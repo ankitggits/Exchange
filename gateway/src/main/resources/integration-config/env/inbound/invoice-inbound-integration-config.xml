@@ -19,7 +19,7 @@
     <int:channel id="invoice-storage-http-request-channel"/>
 
     <int:chain input-channel="invoice-storage-http-request-channel" output-channel="storage-http-reply-channel">
-        <int:transformer ref="inboundTransformer"/>
+        <int:transformer ref="strorageRequestTransformer"/>
         <int-http:outbound-gateway id="gateway"
                                    encode-uri="false"
                                    url="https://vaapstorage.blob.core.windows.net/invoice-inbound/{blobName}?{ssh-string}"
