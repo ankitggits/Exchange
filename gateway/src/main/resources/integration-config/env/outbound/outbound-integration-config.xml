@@ -55,7 +55,7 @@
         <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
     </util:map>
 
-    <int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiverService" method="archive">
+    <int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiver" method="archive">
     </int:service-activator>
 <!--    <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
                                        channel="sftp-outbound-channel" charset="UTF-8" remote-directory="/Producer"
