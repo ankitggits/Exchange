@@ -1,4 +1,4 @@
-package no.sample.exchange.core.gateway.util;
+package no.sample.exchange.gateway.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;

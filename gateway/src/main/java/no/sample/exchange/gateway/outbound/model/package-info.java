@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package no.sample.exchange.core.gateway.outbound.model;
+package no.sample.exchange.gateway.outbound.model;

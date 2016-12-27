@@ -1,4 +1,4 @@
-package no.sample.exchange.core.gateway;
+package no.sample.exchange.gateway;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -15,9 +15,9 @@ import java.util.List;
 public class ExchangeApplication {
 
 	public static void main(String[] args) {
-		//System.setProperty("proxyHost", "proxy");
-		//System.setProperty("proxyPort", "88");
-		 new SpringApplicationBuilder(ExchangeApplication.class)
+		System.setProperty("proxyHost", "proxy");
+		System.setProperty("proxyPort", "88");
+		new SpringApplicationBuilder(ExchangeApplication.class)
          .web(false)
          .run(args);
 	}

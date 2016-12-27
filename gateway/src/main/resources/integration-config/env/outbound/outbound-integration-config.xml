@@ -45,7 +45,7 @@
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
-    <bean id="customOutboundRouter" class="no.sample.exchange.core.gateway.router.SourceTypeRouter">
+    <bean id="customOutboundRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
         <property name="sourceTypePrefixChannelMap" ref="sourceTypePrefixChannelMap"/>
     </bean>
 
@@ -55,10 +55,10 @@
         <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
     </util:map>
 
-    <int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiver" method="archive">
-    </int:service-activator>
-<!--    <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
-                                       channel="sftp-outbound-channel" charset="UTF-8" remote-directory="/Producer"
-                                       remote-file-separator="/"/>-->
+    <!--<int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiver" method="archive"/>-->
+
+    <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
+                                       channel="outbound-sftp-channel" charset="UTF-8" remote-directory="/Producer"
+                                       remote-file-separator="/"/>
 
 </beans>

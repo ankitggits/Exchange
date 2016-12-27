@@ -1,5 +1,5 @@
 
-package no.sample.exchange.core.gateway.outbound.model;
+package no.sample.exchange.gateway.outbound.model;
 
 import java.util.ArrayList;
 import java.util.List;

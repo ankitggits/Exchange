@@ -1,4 +1,4 @@
-package no.sample.exchange.core.gateway.util;
+package no.sample.exchange.gateway.util;
 
 import java.util.Date;
 

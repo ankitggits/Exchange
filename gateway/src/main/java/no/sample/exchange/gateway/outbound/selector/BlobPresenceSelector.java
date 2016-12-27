@@ -1,6 +1,6 @@
-package no.sample.exchange.core.gateway.outbound.selector;
+package no.sample.exchange.gateway.outbound.selector;
 
-import no.sample.exchange.core.gateway.outbound.model.EnumerationResults;
+import no.sample.exchange.gateway.outbound.model.EnumerationResults;
 import org.springframework.integration.core.MessageSelector;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;

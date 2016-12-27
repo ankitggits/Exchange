@@ -1,11 +1,12 @@
-package no.sample.exchange.core.gateway.router;
+package no.sample.exchange.gateway.inbound.router;
 
-import no.sample.exchange.core.gateway.util.BlobInfo;
+import no.sample.exchange.gateway.util.BlobInfo;
 import org.springframework.integration.annotation.Router;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -14,18 +15,18 @@ import java.util.Map;
  * Created by Ankit on 24-12-2016.
  */
 
-public class SourceTypeRouter {
+public class InboundSourceTypeRouter {
 
     private Map<String,MessageChannel> sourceTypePrefixChannelMap;
 
     @Router
     public MessageChannel route(Message message) {
         MessageChannel messageChannel = null;
-        List<BlobInfo> blobInfoList = (List<BlobInfo>) message.getPayload();
+        String fileName = (String) message.getHeaders().get("file_remoteFile");
         Iterator<String> iterator = sourceTypePrefixChannelMap.keySet().iterator();
         while(iterator.hasNext()){
             String prefix = iterator.next();
-            if(blobInfoList.get(0).getBlobMetadata().getBlobName().startsWith(prefix)){
+            if(fileName.startsWith(prefix)){
                 messageChannel = sourceTypePrefixChannelMap.get(prefix);
                 break;
             }

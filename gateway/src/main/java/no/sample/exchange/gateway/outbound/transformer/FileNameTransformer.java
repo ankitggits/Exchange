@@ -1,6 +1,6 @@
-package no.sample.exchange.core.gateway.outbound.transformer;
+package no.sample.exchange.gateway.outbound.transformer;
 
-import no.sample.exchange.core.gateway.util.BlobInfo;
+import no.sample.exchange.gateway.util.BlobInfo;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.transformer.AbstractTransformer;

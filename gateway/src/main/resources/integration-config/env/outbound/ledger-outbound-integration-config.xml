@@ -29,7 +29,7 @@
                                    http-method="GET"
                                    header-mapper="headerMapper"
                                    reply-timeout="50000"
-                                   expected-response-type="no.sample.exchange.core.gateway.outbound.model.EnumerationResults">
+                                   expected-response-type="no.sample.exchange.gateway.outbound.model.EnumerationResults">
 
             <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
         </int-http:outbound-gateway>
@@ -38,7 +38,7 @@
     <int:channel id="blob-ledger-transformer-channel"/>
     <int:transformer input-channel="blob-ledger-transformer-channel" output-channel="outbound-sftp-channel" ref="ledgerFileNameTransformer"/>
 
-    <bean id="ledgerFileNameTransformer" class="no.sample.exchange.core.gateway.outbound.transformer.FileNameTransformer">
+    <bean id="ledgerFileNameTransformer" class="no.sample.exchange.gateway.outbound.transformer.FileNameTransformer">
         <property name="suffix" value="-ledger-hello"/>
     </bean>
 </beans>

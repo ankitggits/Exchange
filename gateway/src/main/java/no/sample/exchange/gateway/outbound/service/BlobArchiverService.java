@@ -1,6 +1,6 @@
-package no.sample.exchange.core.gateway.outbound.service;
+package no.sample.exchange.gateway.outbound.service;
 
-import no.sample.exchange.core.gateway.util.BlobInfo;
+import no.sample.exchange.gateway.util.BlobInfo;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
