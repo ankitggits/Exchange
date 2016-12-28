@@ -36,7 +36,7 @@
     </int:chain>
 
     <int:channel id="blob-ledger-transformer-channel"/>
-    <int:transformer input-channel="blob-ledger-transformer-channel" output-channel="outbound-sftp-channel" ref="ledgerFileNameTransformer"/>
+    <int:transformer input-channel="blob-ledger-transformer-channel" output-channel="outbound-spliter-channel" ref="ledgerFileNameTransformer"/>
 
     <bean id="ledgerFileNameTransformer" class="no.sample.exchange.gateway.outbound.transformer.FileNameTransformer">
         <property name="suffix" value="-ledger-hello"/>

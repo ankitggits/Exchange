@@ -34,8 +34,10 @@
                                                 session-factory="sftpSessionFactory"
                                                 auto-startup="true"
                                                 remote-file-separator="/"
+                                                filename-pattern="*.txt"
+                                                filter=""
                                                 remote-directory-expression="'Consumer'">
-        <int:poller fixed-rate="15000" />
+        <int:poller fixed-rate="15000" max-messages-per-poll="1"/>
     </int-sftp:inbound-streaming-channel-adapter>
 
     <int:transformer input-channel="managed-inbound-channel" output-channel="outbound-router-channel" ref="inboundLoggingService"/>

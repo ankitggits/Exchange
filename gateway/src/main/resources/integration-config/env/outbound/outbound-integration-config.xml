@@ -57,8 +57,13 @@
 
     <!--<int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiver" method="archive"/>-->
 
+    <int:splitter ref="outboundSplitter"
+                  method="split"
+                  input-channel="outbound-spliter-channel"
+                  output-channel="outbound-sftp-channel"/>
+
     <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
                                        channel="outbound-sftp-channel" charset="UTF-8" remote-directory="/Producer"
-                                       remote-file-separator="/"/>
+                                       remote-file-separator="/" />
 
 </beans>

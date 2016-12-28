@@ -36,7 +36,7 @@
     </int:chain>
 
     <int:channel id="blob-invoice-transformer-channel"/>
-    <int:transformer input-channel="blob-invoice-transformer-channel" output-channel="outbound-sftp-channel" ref="invoiceFileNameTransformer"/>
+    <int:transformer input-channel="blob-invoice-transformer-channel" output-channel="outbound-spliter-channel" ref="invoiceFileNameTransformer"/>
 
     <bean id="invoiceFileNameTransformer" class="no.sample.exchange.gateway.outbound.transformer.FileNameTransformer">
         <property name="suffix" value="-invoice-hello"/>
