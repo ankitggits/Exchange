@@ -35,7 +35,6 @@
         </int-http:outbound-gateway>
     </int:chain>
 
-    <int:channel id="blob-promatch-transformer-channel"/>
     <int:transformer input-channel="blob-promatch-transformer-channel" output-channel="outbound-spliter-channel" ref="promatchFileNameTransformer"/>
 
     <bean id="promatchFileNameTransformer" class="no.sample.exchange.gateway.outbound.transformer.FileNameTransformer">

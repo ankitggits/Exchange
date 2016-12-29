@@ -22,17 +22,7 @@ public class MailRequestHandler {
     @ServiceActivator
     public MailMessage handle(MessagingException exc) {
         logger.error("Request failed. Sending mail");
-
         MailMessage mailMsg = new SimpleMailMessage();
-        mailMsg.setFrom("Theater.System");
-        mailMsg.setTo("ankit.java8@gmail.com");
-        mailMsg.setSubject("theater request failed");
-
-        String theater = "files message";
-        StringBuilder textMessage = new StringBuilder("Invocation to ").append(theater).append(" failed\\n\\n")
-                .append("Error message was: ").append(exc.getMessage());
-        mailMsg.setText(textMessage.toString());
-
         return mailMsg;
     }
 }

@@ -15,9 +15,9 @@
 
     <import resource="classpath:integration-config/env/outbound/ledger-outbound-integration-config.xml"/>
 
-    <import resource="classpath:integration-config/env/outbound/invoice-outbound-integration-config.xml"/>
+<!--    <import resource="classpath:integration-config/env/outbound/invoice-outbound-integration-config.xml"/>
 
-    <import resource="classpath:integration-config/env/outbound/promatch-outbound-integration-config.xml"/>
+    <import resource="classpath:integration-config/env/outbound/promatch-outbound-integration-config.xml"/>-->
 
     <int:channel id="outbound-filter-channel"/>
 
@@ -27,11 +27,19 @@
 
     <int:channel id="outbound-router-channel">
         <int:interceptors>
-            <int:wire-tap channel="loggingChannel1"/>
+            <int:wire-tap channel="loggingChannel"/>
         </int:interceptors>
     </int:channel>
 
-    <int:channel id="outbound-sftp-channel"/>
+    <int:channel id="blob-ledger-transformer-channel"/>
+
+    <int:channel id="blob-invoice-transformer-channel"/>
+
+    <int:channel id="blob-promatch-transformer-channel"/>
+
+    <int:publish-subscribe-channel id="outbound-sftp-channel"/>
+
+
 
     <int:filter input-channel="outbound-filter-channel" output-channel="outbound-enricher-channel" ref="blobPresenceSelector"/>
 
@@ -39,9 +47,7 @@
 
     <int:transformer input-channel="outbound-logger-channel" output-channel="outbound-router-channel" ref="outboundLoggingService"/>
 
-    <int:logging-channel-adapter id="loggingChannel1"
-            expression="'Value of header foo_bar: '.concat(headers)"
-            level="DEBUG"/>
+    <int:logging-channel-adapter id="loggingChannel" expression="'Value of header foo_bar: '.concat(headers)" level="DEBUG"/>
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
@@ -51,19 +57,30 @@
 
     <util:map id="sourceTypePrefixChannelMap">
         <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
-        <entry key="invoice" value-ref="blob-invoice-transformer-channel"/>
-        <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
+        <entry key="12invoice" value-ref="blob-invoice-transformer-channel"/>
+        <entry key="12promatch" value-ref="blob-promatch-transformer-channel"/>
     </util:map>
 
-    <!--<int:service-activator input-channel="outbound-sftp-channel" ref="blobArchiver" method="archive"/>-->
-
-    <int:splitter ref="outboundSplitter"
-                  method="split"
-                  input-channel="outbound-spliter-channel"
-                  output-channel="outbound-sftp-channel"/>
+    <int:splitter ref="outboundSplitter" input-channel="outbound-spliter-channel" output-channel="outbound-sftp-channel"/>
 
     <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
                                        channel="outbound-sftp-channel" charset="UTF-8" remote-directory="/Producer"
-                                       remote-file-separator="/" />
+                                       remote-file-separator="/" order="1">
+        <int-sftp:request-handler-advice-chain>
+            <bean class="org.springframework.integration.handler.advice.ExpressionEvaluatingRequestHandlerAdvice">
+                <property name="onSuccessExpression" value="@outboundArchiver.handle(headers.file_name)"/>
+                <property name="successChannel" ref="outbound-sftp-success-channel"/>
+                <!--<property name="onFailureExpression" value="payload.renameTo('C:/failed/' + payload.name)"/>
+                <property name="failureChannel" ref="afterFailRenameChannel" />-->
+            </bean>
+        </int-sftp:request-handler-advice-chain>
+    </int-sftp:outbound-channel-adapter>
+
+    <int:channel id="outbound-sftp-success-channel"/>
+    <int:channel id="outbound-sftp-failure-channel"/>
+
+    <int:service-activator input-channel="outbound-sftp-success-channel" ref="outboundArchiver"/>
+
+    <int:service-activator input-channel="outbound-sftp-failure-channel" ref="outboundArchiver"/>
 
 </beans>

@@ -2,6 +2,7 @@ package no.sample.exchange.gateway.outbound.transformer;
 
 import no.sample.exchange.gateway.util.BlobInfo;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.transformer.AbstractTransformer;
 import org.springframework.messaging.Message;
@@ -12,9 +13,11 @@ import java.util.List;
 /**
  * Created by Ankit on 23-12-2016.
  */
-public class FileNameTransformer extends AbstractTransformer{
+public class FileNameTransformer extends AbstractTransformer implements BeanNameAware{
 
     private String suffix;
+
+    private String beanName;
 
     @Override
     protected Message<?> doTransform(Message<?> message) throws Exception {
@@ -27,7 +30,7 @@ public class FileNameTransformer extends AbstractTransformer{
             String blobNameWithOutExt = FilenameUtils.removeExtension(blobName);
             blobInfo.getBlobMetadata().setExtension(extension);
             blobInfo.getBlobMetadata().setFileName(blobNameWithOutExt.concat(suffix).concat(".").concat(extension));
-            System.out.println("file name transformed to ::"+ blobInfo.getBlobMetadata().getFileName());
+            System.out.println(beanName+" :: file name transformed to ::"+ blobInfo.getBlobMetadata().getFileName());
         }
         return MessageBuilder.withPayload(blobInfos).build();
     }
@@ -39,4 +42,10 @@ public class FileNameTransformer extends AbstractTransformer{
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
+
+    @Override
+    public String toString() {
+        return (this.beanName != null) ? this.beanName : super.toString();
+    }
+
 }

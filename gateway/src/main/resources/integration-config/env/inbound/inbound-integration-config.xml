@@ -16,7 +16,9 @@
         http://www.springframework.org/schema/integration/http
         http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
-    <int:channel id="managed-inbound-channel"></int:channel>
+    <int:channel id="managed-inbound-channel"/>
+
+    <int:channel id="storage-http-reply-channel"/>
 
     <!--<int-sftp:inbound-channel-adapter id="sftpInbondAdapter"
                                       auto-startup="true"
@@ -59,8 +61,6 @@
     <import resource="classpath:integration-config/env/inbound/invoice-inbound-integration-config.xml"/>
 
     <import resource="classpath:integration-config/env/inbound/cards-inbound-integration-config.xml"/>
-
-    <int:channel id="storage-http-reply-channel"/>
 
     <int:service-activator input-channel="storage-http-reply-channel" ref="azureBlobResponseHandler" method="handle"/>
 
