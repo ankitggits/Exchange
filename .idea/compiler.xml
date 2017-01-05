@@ -23,15 +23,13 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="api" />
-        <module name="core" />
         <module name="gateway" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="api" target="1.6" />
-      <module name="core" target="1.6" />
-      <module name="Exchange" target="1.6" />
-      <module name="gateway" target="1.6" />
+      <module name="api" target="1.7" />
+      <module name="gateway" target="1.7" />
+      <module name="parent" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -62,6 +62,6 @@
 
     <import resource="classpath:integration-config/env/inbound/cards-inbound-integration-config.xml"/>
 
-    <int:service-activator input-channel="storage-http-reply-channel" ref="azureBlobResponseHandler" method="handle"/>
+    <int:service-activator input-channel="storage-http-reply-channel" ref="azureBlobResponseHandler"/>
 
 </beans>

@@ -19,7 +19,7 @@
     <int:channel id="cards-storage-http-request-channel"/>
 
     <int:chain input-channel="cards-storage-http-request-channel" output-channel="storage-http-reply-channel">
-        <int:transformer ref="strorageRequestTransformer"/>
+        <int:transformer ref="inboundStrorageRequestTransformer"/>
         <int-http:outbound-gateway id="gateway"
                                    encode-uri="false"
                                    url="https://vaapstorage.blob.core.windows.net/card/{blobName}?{ssh-string}"

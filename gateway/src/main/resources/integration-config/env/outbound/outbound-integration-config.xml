@@ -4,6 +4,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
        xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/util
@@ -11,7 +12,9 @@
 		http://www.springframework.org/schema/integration
 		http://www.springframework.org/schema/integration/spring-integration.xsd
 		http://www.springframework.org/schema/integration/sftp
-		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd">
+		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
+        http://www.springframework.org/schema/integration/http
+        http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
     <import resource="classpath:integration-config/env/outbound/ledger-outbound-integration-config.xml"/>
 
@@ -37,9 +40,15 @@
 
     <int:channel id="blob-promatch-transformer-channel"/>
 
+    <int:channel id="outbound-ledger-archiver-channel"/>
+
+    <int:channel id="outbound-invoice-archiver-channel"/>
+
+    <int:channel id="outbound-promatch-archiver-channel"/>
+
     <int:publish-subscribe-channel id="outbound-sftp-channel"/>
 
-
+    <int:channel id="outbound-archival-reply-channel"/>
 
     <int:filter input-channel="outbound-filter-channel" output-channel="outbound-enricher-channel" ref="blobPresenceSelector"/>
 
@@ -53,6 +62,7 @@
 
     <bean id="customOutboundRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
         <property name="sourceTypePrefixChannelMap" ref="sourceTypePrefixChannelMap"/>
+        <property name="type" value="list"/>
     </bean>
 
     <util:map id="sourceTypePrefixChannelMap">
@@ -70,17 +80,31 @@
             <bean class="org.springframework.integration.handler.advice.ExpressionEvaluatingRequestHandlerAdvice">
                 <property name="onSuccessExpression" value="@outboundArchiver.handle(headers.file_name)"/>
                 <property name="successChannel" ref="outbound-sftp-success-channel"/>
-                <!--<property name="onFailureExpression" value="payload.renameTo('C:/failed/' + payload.name)"/>
-                <property name="failureChannel" ref="afterFailRenameChannel" />-->
             </bean>
         </int-sftp:request-handler-advice-chain>
     </int-sftp:outbound-channel-adapter>
 
     <int:channel id="outbound-sftp-success-channel"/>
-    <int:channel id="outbound-sftp-failure-channel"/>
 
-    <int:service-activator input-channel="outbound-sftp-success-channel" ref="outboundArchiver"/>
+    <int:router input-channel="outbound-sftp-success-channel" ref="customOutboundArchivalRouter"/>
 
-    <int:service-activator input-channel="outbound-sftp-failure-channel" ref="outboundArchiver"/>
+    <util:map id="sourceTypePrefixChannelMap">
+        <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
+        <entry key="invoice" value-ref="blob-invoice-transformer-channel"/>
+        <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
+    </util:map>
+
+    <util:map id="sourceTypeArchivalChannelMap">
+        <entry key="ledger" value-ref="outbound-ledger-archiver-channel"/>
+        <entry key="invoice" value-ref="outbound-invoice-archiver-channel"/>
+        <entry key="promatch" value-ref="outbound-promatch-archiver-channel"/>
+    </util:map>
+
+    <bean id="customOutboundArchivalRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
+        <property name="sourceTypePrefixChannelMap" ref="sourceTypeArchivalChannelMap"/>
+        <property name="type" value="blob"/>
+    </bean>
+
+    <int:service-activator input-channel="outbound-archival-reply-channel" ref="outboundArchiveResponseHandler"/>
 
 </beans>

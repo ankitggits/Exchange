@@ -23,7 +23,7 @@
         <!--<property name="privateKey" value="classpath:keys/sftp_rsa"/>
         <property name="privateKeyPassphrase" value="password"/>-->
         <property name="port" value="22"/>
-        <property name="user" value="VIPPS001s"/>
+        <property name="user" value="VIPPS001S"/>
         <property name="allowUnknownKeys" value="true"/>
     </bean>
 
@@ -33,7 +33,7 @@
         <property name="userDefinedHeaderPrefix" value="X-ms-" />
     </bean>
 
-    <!--<import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>-->
+    <import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>
 
     <import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>
 

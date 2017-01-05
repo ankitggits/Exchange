@@ -10,11 +10,11 @@ public class ConfiguraitonService {
 
 
     public String getSshString(){
-        return "sv=2015-12-11&ss=b&srt=sco&sp=rwdlac&se=2016-12-31T23:10:07Z&st=2016-12-20T12:10:07Z&spr=https&sig=blgvXWJxmew8T8Usrzv1DLZIhDTTTSsiQzUBBurVjNA%3D";
+        return "sv=2015-12-11&ss=b&srt=sco&sp=rwdlac&se=2017-08-31T00:33:00Z&st=2017-01-02T13:33:00Z&spr=https&sig=Olbe3hpDZWRmorvOtybne2WuQdwXfgd7UwslF%2Bm%2BX8A%3D";
     }
 
     public String getSshStringForList(){
-        return "restype=container&comp=list&sv=2015-12-11&ss=b&srt=sco&sp=rwdlac&se=2016-12-31T23:10:07Z&st=2016-12-20T12:10:07Z&spr=https&sig=blgvXWJxmew8T8Usrzv1DLZIhDTTTSsiQzUBBurVjNA%3D";
+        return "restype=container&comp=list&".concat(getSshString());
     }
 
 }
