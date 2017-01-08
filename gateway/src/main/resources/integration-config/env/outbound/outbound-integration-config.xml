@@ -22,6 +22,8 @@
 
     <import resource="classpath:integration-config/env/outbound/promatch-outbound-integration-config.xml"/>-->
 
+    <!-- Channels -->
+
     <int:channel id="outbound-filter-channel"/>
 
     <int:channel id="outbound-logger-channel"/>
@@ -50,26 +52,17 @@
 
     <int:channel id="outbound-archival-reply-channel"/>
 
+    <!-- Components-->
+
     <int:filter input-channel="outbound-filter-channel" output-channel="outbound-enricher-channel" ref="blobPresenceSelector"/>
 
     <int:transformer input-channel="outbound-enricher-channel" output-channel="outbound-logger-channel" ref="blobEnricherTransformer"/>
 
     <int:transformer input-channel="outbound-logger-channel" output-channel="outbound-router-channel" ref="outboundLoggingService"/>
 
-    <int:logging-channel-adapter id="loggingChannel" expression="'Value of header foo_bar: '.concat(headers)" level="DEBUG"/>
+    <int:logging-channel-adapter id="loggingChannel" expression="'Value of header foo_bar: '.concat(headers)" level="INFO"/>
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
-
-    <bean id="customOutboundRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
-        <property name="sourceTypePrefixChannelMap" ref="sourceTypePrefixChannelMap"/>
-        <property name="type" value="list"/>
-    </bean>
-
-    <util:map id="sourceTypePrefixChannelMap">
-        <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
-        <entry key="12invoice" value-ref="blob-invoice-transformer-channel"/>
-        <entry key="12promatch" value-ref="blob-promatch-transformer-channel"/>
-    </util:map>
 
     <int:splitter ref="outboundSplitter" input-channel="outbound-spliter-channel" output-channel="outbound-sftp-channel"/>
 
@@ -88,23 +81,29 @@
 
     <int:router input-channel="outbound-sftp-success-channel" ref="customOutboundArchivalRouter"/>
 
-    <util:map id="sourceTypePrefixChannelMap">
-        <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
-        <entry key="invoice" value-ref="blob-invoice-transformer-channel"/>
-        <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
-    </util:map>
+    <int:service-activator input-channel="outbound-archival-reply-channel" ref="outboundArchiveResponseHandler"/>
 
-    <util:map id="sourceTypeArchivalChannelMap">
-        <entry key="ledger" value-ref="outbound-ledger-archiver-channel"/>
-        <entry key="invoice" value-ref="outbound-invoice-archiver-channel"/>
-        <entry key="promatch" value-ref="outbound-promatch-archiver-channel"/>
-    </util:map>
-
-    <bean id="customOutboundArchivalRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
-        <property name="sourceTypePrefixChannelMap" ref="sourceTypeArchivalChannelMap"/>
-        <property name="type" value="blob"/>
+    <!-- BEAN DEFIITION -->
+    <bean id="customOutboundRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
+        <property name="sourceTypePrefixChannelMap" >
+            <util:map>
+                <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
+                <entry key="invoice" value-ref="blob-invoice-transformer-channel"/>
+                <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
+            </util:map>
+        </property>
+        <property name="type" value="list"/>
     </bean>
 
-    <int:service-activator input-channel="outbound-archival-reply-channel" ref="outboundArchiveResponseHandler"/>
+    <bean id="customOutboundArchivalRouter" class="no.sample.exchange.gateway.outbound.router.OutboundSourceTypeRouter">
+        <property name="sourceTypePrefixChannelMap">
+            <util:map>
+                <entry key="ledger" value-ref="outbound-ledger-archiver-channel"/>
+                <entry key="invoice" value-ref="outbound-invoice-archiver-channel"/>
+                <entry key="promatch" value-ref="outbound-promatch-archiver-channel"/>
+            </util:map>
+        </property>
+        <property name="type" value="blob"/>
+    </bean>
 
 </beans>

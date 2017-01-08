@@ -1,6 +1,4 @@
-package no.sample.exchange.gateway.model;
-
-import java.util.Date;
+package no.sample.exchange.gateway.common.model;
 
 /**
  * Created by Ankit on 23-12-2016.

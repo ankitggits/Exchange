@@ -1,6 +1,6 @@
 package no.sample.exchange.gateway.outbound.transformer;
 
-import no.sample.exchange.gateway.model.BlobInfo;
+import no.sample.exchange.gateway.common.model.BlobInfo;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.integration.support.MessageBuilder;

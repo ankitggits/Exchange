@@ -1,6 +1,6 @@
 package no.sample.exchange.gateway.outbound.router;
 
-import no.sample.exchange.gateway.model.BlobInfo;
+import no.sample.exchange.gateway.common.model.BlobInfo;
 import org.springframework.integration.annotation.Router;
 import org.springframework.integration.message.AdviceMessage;
 import org.springframework.messaging.Message;

@@ -1,11 +1,9 @@
-package no.sample.exchange.gateway.util;
+package no.sample.exchange.gateway.common.util;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.integration.file.filters.AbstractFileListFilter;
-import org.springframework.integration.file.filters.AcceptAllFileListFilter;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.List;
 
 /**

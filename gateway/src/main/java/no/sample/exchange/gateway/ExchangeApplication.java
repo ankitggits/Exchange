@@ -15,8 +15,8 @@ import java.util.List;
 public class ExchangeApplication {
 
 	public static void main(String[] args) {
-		System.setProperty("proxyHost", "proxy");
-		System.setProperty("proxyPort", "88");
+		//System.setProperty("proxyHost", "proxy");
+		//System.setProperty("proxyPort", "88");
 		new SpringApplicationBuilder(ExchangeApplication.class)
          .web(false)
          .run(args);

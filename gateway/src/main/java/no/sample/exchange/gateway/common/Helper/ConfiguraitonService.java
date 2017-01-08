@@ -1,4 +1,4 @@
-package no.sample.exchange.gateway.Helper;
+package no.sample.exchange.gateway.common.Helper;
 
 import org.springframework.stereotype.Component;
 

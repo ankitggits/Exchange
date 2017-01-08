@@ -33,9 +33,9 @@
         <property name="userDefinedHeaderPrefix" value="X-ms-" />
     </bean>
 
-    <import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>
+    <!--<import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>-->
 
-    <!--<import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>-->
+    <import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>
 
     <int:chain input-channel="errorChannel">
         <int:service-activator ref="mailRequestHandler" method="handle"/>

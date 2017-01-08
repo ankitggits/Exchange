@@ -1,6 +1,6 @@
 package no.sample.exchange.gateway.outbound.splitter;
 
-import no.sample.exchange.gateway.model.BlobInfo;
+import no.sample.exchange.gateway.common.model.BlobInfo;
 import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.splitter.AbstractMessageSplitter;
 import org.springframework.integration.support.MessageBuilder;
