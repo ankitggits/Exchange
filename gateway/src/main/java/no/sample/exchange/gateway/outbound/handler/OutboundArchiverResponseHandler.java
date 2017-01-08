@@ -1,6 +1,5 @@
-package no.sample.exchange.gateway.outbound.service;
+package no.sample.exchange.gateway.outbound.handler;
 
-import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.handler.AbstractMessageHandler;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;

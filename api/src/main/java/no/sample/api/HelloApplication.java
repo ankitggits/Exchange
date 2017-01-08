@@ -1,16 +1,16 @@
 package no.sample.api;
 
+import no.sample.api.apim.APIMInterceptor;
 import no.sample.api.apim.APIMOutboundStream;
-import no.sample.api.apim.APIMRestTemplate;
-import no.sample.api.apim.RestTemplateAspect;
+import no.sample.api.apim.APIMRequestFactory;
+import no.sample.api.apim.IRestTemplateCustomizer;
+import no.sample.api.interceptor.PSPRequestResponseLogger;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -23,27 +23,40 @@ import java.util.Collections;
 import java.util.List;
 
 @SpringBootApplication
-@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class HelloApplication {
 
    public static void main(String[] args) throws Exception {
        SpringApplication.run(HelloApplication.class, args);
    }
 
-   @Autowired
-   Environment environment;
 
    @Bean
-   public RestTemplateAspect aspect(){
-      return new RestTemplateAspect(environment);
+   public IRestTemplateCustomizer templateCustomizer(){
+       return new IRestTemplateCustomizer() {
+
+           private Environment environment;
+
+           @Override
+           public void setEnvironment(Environment environment) {
+               this.environment = environment;
+           }
+
+           @Override
+           public void customize(APIMOutboundStream stream, RestTemplate restTemplate) {
+               List<ClientHttpRequestInterceptor> interceptorList = new ArrayList<>(restTemplate.getInterceptors());
+               interceptorList.add(new APIMInterceptor());
+               restTemplate.setInterceptors(Collections.<ClientHttpRequestInterceptor>emptyList());
+               restTemplate.setRequestFactory(new APIMRequestFactory(environment, stream ,restTemplate.getRequestFactory(), interceptorList));
+           }
+       };
    }
 
    @Bean
-   @APIMRestTemplate
-   public RestTemplate restTemplate(){
+   public RestTemplate restTemplate(IRestTemplateCustomizer customizer){
        RestTemplate restTemplate = new RestTemplate();
        restTemplate.setInterceptors(Collections.singletonList((ClientHttpRequestInterceptor) new PSPRequestResponseLogger()));
        restTemplate.setRequestFactory(getFactory());
+       customizer.customize(APIMOutboundStream.TEST, restTemplate);
        return restTemplate;
    }
 

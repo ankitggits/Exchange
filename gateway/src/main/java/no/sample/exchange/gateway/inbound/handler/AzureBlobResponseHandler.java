@@ -1,10 +1,8 @@
-package no.sample.exchange.gateway.inbound.service;
+package no.sample.exchange.gateway.inbound.handler;
 
 import org.springframework.integration.handler.AbstractMessageHandler;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
-
-import java.io.File;
 
 /**
  * Created by AB75448 on 21.12.2016.

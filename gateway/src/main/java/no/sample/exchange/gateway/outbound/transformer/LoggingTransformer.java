@@ -1,6 +1,6 @@
 package no.sample.exchange.gateway.outbound.transformer;
 
-import no.sample.exchange.gateway.util.BlobInfo;
+import no.sample.exchange.gateway.model.BlobInfo;
 import org.springframework.integration.transformer.AbstractTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;

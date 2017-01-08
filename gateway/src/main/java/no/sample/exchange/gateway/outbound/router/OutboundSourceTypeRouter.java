@@ -1,11 +1,10 @@
 package no.sample.exchange.gateway.outbound.router;
 
-import no.sample.exchange.gateway.util.BlobInfo;
+import no.sample.exchange.gateway.model.BlobInfo;
 import org.springframework.integration.annotation.Router;
 import org.springframework.integration.message.AdviceMessage;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.util.Assert;
 
 import java.util.Iterator;

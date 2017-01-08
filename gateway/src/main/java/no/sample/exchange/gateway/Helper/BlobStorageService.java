@@ -1,5 +1,6 @@
-package no.sample.exchange.gateway.util;
+package no.sample.exchange.gateway.Helper;
 
+import no.sample.exchange.gateway.model.BlobInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;

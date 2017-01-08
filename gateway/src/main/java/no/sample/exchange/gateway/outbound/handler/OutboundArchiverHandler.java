@@ -1,13 +1,9 @@
-package no.sample.exchange.gateway.outbound.service;
+package no.sample.exchange.gateway.outbound.handler;
 
-import no.sample.exchange.gateway.util.BlobInfo;
 import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.handler.AbstractMessageHandler;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
-
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by Ankit on 24-12-2016.

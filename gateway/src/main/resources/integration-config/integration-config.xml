@@ -35,15 +35,15 @@
 
     <import resource="classpath:integration-config/env/inbound/inbound-integration-config.xml"></import>
 
-    <import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>
+    <!--<import resource="classpath:integration-config/env/outbound/outbound-integration-config.xml"></import>-->
 
     <int:chain input-channel="errorChannel">
-        <int:service-activator ref="mailRequestHandler"/>
-        <!--<int-mail:outbound-channel-adapter mail-sender="mailSender" />-->
+        <int:service-activator ref="mailRequestHandler" method="handle"/>
+        <int-mail:outbound-channel-adapter mail-sender="mailSender" />
     </int:chain>
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="smtp-relay.dnb.no" />
+        <property name="host" value="smtp.gmail.com" />
         <property name="port" value="465" />
         <property name="username" value="ankit.baba1489@gmail.com" />
         <property name="password" value="Thisis4u" />
@@ -51,7 +51,6 @@
             <props>
                 <prop key="mail.smtp.starttls.enable">true</prop>
                 <prop key="mail.smtp.auth">true</prop>
-                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>
             </props>
         </property>
     </bean>

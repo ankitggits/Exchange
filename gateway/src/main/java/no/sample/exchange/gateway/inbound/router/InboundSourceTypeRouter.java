@@ -1,14 +1,11 @@
 package no.sample.exchange.gateway.inbound.router;
 
-import no.sample.exchange.gateway.util.BlobInfo;
 import org.springframework.integration.annotation.Router;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.util.Assert;
 
-import java.io.File;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 /**

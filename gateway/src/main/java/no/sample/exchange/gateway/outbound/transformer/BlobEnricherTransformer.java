@@ -1,8 +1,8 @@
 package no.sample.exchange.gateway.outbound.transformer;
 
 import no.sample.exchange.gateway.outbound.model.EnumerationResults;
-import no.sample.exchange.gateway.util.BlobInfo;
-import no.sample.exchange.gateway.util.BlobStorageService;
+import no.sample.exchange.gateway.model.BlobInfo;
+import no.sample.exchange.gateway.Helper.BlobStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.transformer.AbstractTransformer;
