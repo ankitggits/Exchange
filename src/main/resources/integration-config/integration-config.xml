@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
+       xmlns:file="http://www.springframework.org/schema/integration/file"
+       xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/integration
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/sftp
+        http://www.springframework.org/schema/integration/sftp/spring-integration-sftp-2.2.xsd
+        http://www.springframework.org/schema/integration/file
+        http://www.springframework.org/schema/integration/file/spring-integration-file-2.2.xsd
+        http://www.springframework.org/schema/integration/mail
+        http://www.springframework.org/schema/integration/mail/spring-integration-mail.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>storage.properties</value>
+            <value></value>
+        </property>
+    </bean>
+
+    <bean id="sftpSessionFactory" class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
+        <property name="host" value="10.219.238.132"/>
+        <property name="password" value="Norway123"/>
+        <!--<property name="privateKey" value="classpath:keys/sftp_rsa"/>
+        <property name="privateKeyPassphrase" value="password"/>-->
+        <property name="port" value="22"/>
+        <property name="user" value="VIPPS001S"/>
+        <property name="allowUnknownKeys" value="true"/>
+    </bean>
+
+    <bean id="headerMapper" class="org.springframework.integration.http.support.DefaultHttpHeaderMapper">
+        <property name="outboundHeaderNames" value="HTTP_REQUEST_HEADERS, version, date, blob-content-disposition, blob-type, charset" />
+        <property name="inboundHeaderNames" value="HTTP_RESPONSE_HEADERS, version, date, blob-content-disposition, blob-type, charset"/>
+        <property name="userDefinedHeaderPrefix" value="X-ms-" />
+    </bean>
+
+    <!--<import resource="classpath:integration-config/inbound/inbound-integration-config.xml"></import>-->
+
+    <import resource="classpath:integration-config/outbound/outbound-integration-config.xml"></import>
+
+    <int:chain input-channel="errorChannel">
+        <int:service-activator ref="mailRequestHandler" method="handle"/>
+        <int-mail:outbound-channel-adapter mail-sender="mailSender" />
+    </int:chain>
+
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="465" />
+        <property name="username" value="ankit.baba1489@gmail.com" />
+        <property name="password" value="Thisis4u" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.auth">true</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

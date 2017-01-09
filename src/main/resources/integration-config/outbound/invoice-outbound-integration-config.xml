@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-http="http://www.springframework.org/schema/integration/http"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/integration
+		http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/integration/http
+        http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
+
+    <int:channel id="storage-invoice-request-channel"/>
+
+    <int:inbound-channel-adapter channel="storage-invoice-request-channel" expression="''">
+        <int:poller fixed-delay="9000"></int:poller>
+    </int:inbound-channel-adapter>
+
+    <int:chain input-channel="storage-invoice-request-channel" output-channel="outbound-filter-channel">
+        <int:header-enricher>
+            <int:header name="version" value="2015-02-21"/>
+            <int:header name="date" value="Tue, 12 Dec 2016 15:28:13 GMT"/>
+            <int:header name="Content-Type" value="text/xml"/>
+        </int:header-enricher>
+
+        <int-http:outbound-gateway id="httpInboundGateway"
+                                   encode-uri="false"
+                                   url="https://vaapstorage.blob.core.windows.net/invoice?{ssh-string-list}"
+                                   http-method="GET"
+                                   header-mapper="headerMapper"
+                                   reply-timeout="50000"
+                                   expected-response-type="no.sample.exchange.outbound.model.EnumerationResults">
+
+            <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
+        </int-http:outbound-gateway>
+    </int:chain>
+
+    <int:transformer input-channel="blob-invoice-transformer-channel" output-channel="outbound-spliter-channel" ref="invoiceFileNameTransformer"/>
+
+    <bean id="invoiceFileNameTransformer" class="no.sample.exchange.outbound.transformer.FileNameTransformer">
+        <property name="suffix" value="-invoice-hello"/>
+    </bean>
+
+    <int:chain input-channel="outbound-invoice-archiver-channel" output-channel="outbound-archival-reply-channel">
+        <int:transformer ref="outboundStrorageRequestTransformer"/>
+        <int-http:outbound-gateway id="archivalGateway"
+                                   encode-uri="false"
+                                   url="https://vaapstorage.blob.core.windows.net/invoice/{blobName}?{ssh-string}"
+                                   http-method="DELETE"
+                                   header-mapper="headerMapper">
+            <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
+            <int-http:uri-variable name="blobName" expression="headers.blobName"/>
+        </int-http:outbound-gateway>
+    </int:chain>
+</beans>
