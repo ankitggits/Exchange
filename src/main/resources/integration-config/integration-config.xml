@@ -18,9 +18,12 @@
         http://www.springframework.org/schema/integration/mail/spring-integration-mail.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location">
-            <value>storage.properties</value>
-            <value></value>
+        <property name="locations">
+            <list>
+                <value>classpath:integration-properties/storage.properties</value>
+                <value>classpath:integration-properties/mail.properties</value>
+                <value>classpath:integration-properties/sftp.properties</value>
+            </list>
         </property>
     </bean>
 
@@ -40,7 +43,7 @@
         <property name="userDefinedHeaderPrefix" value="X-ms-" />
     </bean>
 
-    <!--<import resource="classpath:integration-config/inbound/inbound-integration-config.xml"></import>-->
+    <import resource="classpath:integration-config/inbound/inbound-integration-config.xml"></import>
 
     <import resource="classpath:integration-config/outbound/outbound-integration-config.xml"></import>
 
