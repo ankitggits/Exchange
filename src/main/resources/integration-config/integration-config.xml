@@ -23,17 +23,18 @@
                 <value>classpath:integration-properties/storage.properties</value>
                 <value>classpath:integration-properties/mail.properties</value>
                 <value>classpath:integration-properties/sftp.properties</value>
+                <value>classpath:integration-properties/destination.properties</value>
             </list>
         </property>
     </bean>
 
     <bean id="sftpSessionFactory" class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
-        <property name="host" value="10.219.238.132"/>
-        <property name="password" value="Norway123"/>
+        <property name="host" value="sftp.host"/>
+        <property name="port" value="sftp.port"/>
+        <property name="user" value="sftp.username"/>
+        <property name="password" value="sftp.password"/>
         <!--<property name="privateKey" value="classpath:keys/sftp_rsa"/>
         <property name="privateKeyPassphrase" value="password"/>-->
-        <property name="port" value="22"/>
-        <property name="user" value="VIPPS001S"/>
         <property name="allowUnknownKeys" value="true"/>
     </bean>
 
@@ -53,10 +54,10 @@
     </int:chain>
 
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="smtp.gmail.com" />
-        <property name="port" value="465" />
-        <property name="username" value="ankit.baba1489@gmail.com" />
-        <property name="password" value="Thisis4u" />
+        <property name="host" value="${mail.host}" />
+        <property name="port" value="${mail.port}" />
+        <property name="username" value="${mail.username}" />
+        <property name="password" value="${mail.password}" />
         <property name="javaMailProperties">
             <props>
                 <prop key="mail.smtp.starttls.enable">true</prop>

@@ -21,17 +21,6 @@
 
     <int:channel id="storage-http-reply-channel"/>
 
-    <!--<int-sftp:inbound-channel-adapter id="sftpInbondAdapter"
-                                      auto-startup="true"
-                                      channel="managed-inbound-channel"
-                                      session-factory="sftpSessionFactory"
-                                      local-directory="file:local-dir"
-                                      remote-directory="Consumer"
-                                      auto-create-local-directory="true"
-                                      delete-remote-files="false">
-        <int:poller fixed-rate="15000" max-messages-per-poll="1"/>
-    </int-sftp:inbound-channel-adapter>-->
-
     <int-sftp:inbound-streaming-channel-adapter id="sftpInbound"
                                                 channel="managed-inbound-channel"
                                                 session-factory="sftpSessionFactory"

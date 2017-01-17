@@ -25,7 +25,7 @@
 
         <int-http:outbound-gateway id="httpInboundGateway"
                                    encode-uri="false"
-                                   url="https://vaapstorage.blob.core.windows.net/invoice?{ssh-string-list}"
+                                   url="${url.outbound.storage.get.invoice}"
                                    http-method="GET"
                                    header-mapper="headerMapper"
                                    reply-timeout="50000"
@@ -45,7 +45,7 @@
         <int:transformer ref="outboundStrorageRequestTransformer"/>
         <int-http:outbound-gateway id="archivalGateway"
                                    encode-uri="false"
-                                   url="https://vaapstorage.blob.core.windows.net/invoice/{blobName}?{ssh-string}"
+                                   url="${url.outbound.storage.delete.ledger}"
                                    http-method="DELETE"
                                    header-mapper="headerMapper">
             <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>

@@ -25,7 +25,7 @@
 
         <int-http:outbound-gateway id="httpInboundGateway"
                                    encode-uri="false"
-                                   url="https://vaapstorage.blob.core.windows.net/promatch?{ssh-string-list}"
+                                   url="${url.outbound.storage.get.promatch}"
                                    http-method="GET"
                                    header-mapper="headerMapper"
                                    reply-timeout="50000"
