@@ -17,22 +17,24 @@
         http://www.springframework.org/schema/integration/http
         http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
-    <int:channel id="managed-inbound-channel"/>
+    <int:channel id="inbound-managed-channel"/>
+
+    <int:channel id="inbound-logger-channel"/>
 
     <int:channel id="storage-http-reply-channel"/>
 
     <int-sftp:inbound-streaming-channel-adapter id="sftpInbound"
-                                                channel="managed-inbound-channel"
+                                                channel="inbound-managed-channel"
                                                 session-factory="sftpSessionFactory"
                                                 auto-startup="true"
                                                 remote-file-separator="/"
                                                 filename-pattern="*.xml"
                                                 filter=""
                                                 remote-directory-expression="'Consumer'">
-        <int:poller fixed-rate="15000" max-messages-per-poll="1"/>
+        <int:poller fixed-rate="60000" max-messages-per-poll="-1"/>
     </int-sftp:inbound-streaming-channel-adapter>
 
-    <int:transformer input-channel="managed-inbound-channel" output-channel="outbound-router-channel" ref="inboundLoggingService"/>
+    <int:transformer input-channel="inbound-managed-channel" output-channel="outbound-router-channel" ref="inboundLoggingService"/>
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
