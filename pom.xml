@@ -98,6 +98,14 @@
             <version>1.7.5</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.apache.sshd/sshd-core -->
+        <dependency>
+            <groupId>org.apache.sshd</groupId>
+            <artifactId>sshd-core</artifactId>
+            <version>0.14.0</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

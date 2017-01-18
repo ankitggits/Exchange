@@ -15,7 +15,7 @@ public class MailRequestHandler{
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public MailMessage handle(MessagingException exc) {
-        logger.error("Request failed. Sending mail");
+        logger.error("Request failed. Sending mail", exc);
 
         MailMessage mailMsg = new SimpleMailMessage();
         mailMsg.setFrom("ankit.java8@gmail.com");
