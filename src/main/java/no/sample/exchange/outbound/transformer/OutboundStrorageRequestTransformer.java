@@ -8,6 +8,12 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by AB75448 on 20.12.2016.
@@ -20,8 +26,15 @@ public class OutboundStrorageRequestTransformer extends AbstractTransformer{
         String blobName = (String) ((AdviceMessage)message).getInputMessage().getHeaders().get("file_name");
         return MessageBuilder.withPayload(blobName)
                 .setHeader("version","2015-02-21")
-                .setHeader("date","Tue, 12 Dec 2016 15:28:13 GMT")
+                .setHeader("date" , getCurrentDateAsString())
                 .build();
 
     }
+
+    private static String getCurrentDateAsString() throws ParseException {
+        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
+        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return dateFormatGmt.format(new Date());
+    }
+
 }

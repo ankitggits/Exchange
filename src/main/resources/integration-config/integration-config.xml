@@ -2,18 +2,12 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:int="http://www.springframework.org/schema/integration"
-       xmlns:int-sftp="http://www.springframework.org/schema/integration/sftp"
-       xmlns:file="http://www.springframework.org/schema/integration/file"
        xmlns:int-mail="http://www.springframework.org/schema/integration/mail"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/integration
         http://www.springframework.org/schema/integration/spring-integration.xsd
-        http://www.springframework.org/schema/integration/sftp
-        http://www.springframework.org/schema/integration/sftp/spring-integration-sftp-2.2.xsd
-        http://www.springframework.org/schema/integration/file
-        http://www.springframework.org/schema/integration/file/spring-integration-file-2.2.xsd
         http://www.springframework.org/schema/integration/mail
         http://www.springframework.org/schema/integration/mail/spring-integration-mail.xsd">
 
@@ -30,10 +24,10 @@
 
     <bean id="sftpSessionFactory" class="org.springframework.integration.sftp.session.DefaultSftpSessionFactory">
         <property name="host" value="${sftp.host}"/>
-        <property name="port" value="#{T(no.sample.exchange.EmbeddedSftpServer).PORT}"/>
+        <property name="port" value="${sftp.port}"/>
         <property name="user" value="${sftp.username}"/>
-        <!--<property name="password" value="sftp.password"/>-->
-        <property name="privateKey" value="classpath:keys/sftp_rsa"/>
+        <property name="password" value="${sftp.password}"/>
+        <!--<property name="privateKey" value="classpath:keys/sftp_rsa"/>-->
         <!--<property name="privateKeyPassphrase" value="password"/>-->
         <property name="allowUnknownKeys" value="true"/>
     </bean>

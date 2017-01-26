@@ -18,9 +18,9 @@
 
     <import resource="classpath:integration-config/outbound/ledger-outbound-integration-config.xml"/>
 
-<!--    <import resource="classpath:integration-config/outbound/invoice-outbound-integration-config.xml"/>
+    <import resource="classpath:integration-config/outbound/invoice-outbound-integration-config.xml"/>
 
-    <import resource="classpath:integration-config/outbound/promatch-outbound-integration-config.xml"/>-->
+    <import resource="classpath:integration-config/outbound/promatch-outbound-integration-config.xml"/>
 
     <!-- Channels -->
 
