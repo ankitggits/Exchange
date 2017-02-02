@@ -29,7 +29,7 @@
                                    http-method="GET"
                                    header-mapper="headerMapper"
                                    reply-timeout="50000"
-                                   expected-response-type="no.sample.exchange.outbound.model.EnumerationResults">
+                                   expected-response-type="no.vipps.exchange.outbound.model.EnumerationResults">
 
             <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
         </int-http:outbound-gateway>
@@ -37,8 +37,9 @@
 
     <int:transformer input-channel="blob-ledger-transformer-channel" output-channel="outbound-spliter-channel" ref="ledgerFileNameTransformer"/>
 
-    <bean id="ledgerFileNameTransformer" class="no.sample.exchange.outbound.transformer.FileNameTransformer">
+    <bean id="ledgerFileNameTransformer" class="no.vipps.exchange.outbound.transformer.OutboundRenameTransformer">
         <property name="suffix" value="-ledger-hello"/>
+        <property name="prefix" value=""/>
     </bean>
 
     <int:chain input-channel="outbound-ledger-archiver-channel" output-channel="outbound-archival-reply-channel">

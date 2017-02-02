@@ -12,6 +12,15 @@
 
     <int:channel id="cards-storage-http-request-channel"/>
 
+    <int:channel id="cards-storage-rename-transformer-channel"/>
+
+    <int:transformer input-channel="cards-storage-rename-transformer-channel" output-channel="cards-storage-http-request-channel" ref="cardsRenameTransformer"/>
+
+    <bean id="cardsRenameTransformer" class="no.vipps.exchange.inbound.transformer.InboundRenameTransformer">
+        <property name="suffix" value=""/>
+        <property name="prefix" value=""/>
+    </bean>
+
     <int:chain input-channel="cards-storage-http-request-channel" output-channel="storage-http-reply-channel">
         <int:transformer ref="inboundStrorageRequestTransformer"/>
         <int-http:outbound-gateway id="gateway"

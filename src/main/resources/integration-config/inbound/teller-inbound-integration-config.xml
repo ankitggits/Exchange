@@ -14,16 +14,28 @@
 
     <int:channel id="teller-storage-http-request-channel"/>
 
+    <int:channel id="teller-storage-rename-transformer-channel"/>
+
+    <int:transformer input-channel="teller-storage-rename-transformer-channel" output-channel="teller-storage-http-request-channel" ref="tellerRenameTransformer"/>
+
+    <bean id="tellerRenameTransformer" class="no.vipps.exchange.inbound.transformer.InboundRenameTransformer">
+        <property name="suffix" value=""/>
+        <property name="prefix" value=""/>
+    </bean>
+
     <int:chain input-channel="teller-storage-http-request-channel" output-channel="storage-http-reply-channel">
         <int:transformer ref="inboundStrorageRequestTransformer"/>
         <int-http:outbound-gateway id="gateway"
-                                   encode-uri="false"
-                                   url="${url.inbound.storage.update.teller}"
-                                   http-method="PUT"
-                                   header-mapper="headerMapper">
-            <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
-            <int-http:uri-variable name="blobName" expression="headers.blobName"/>
-        </int-http:outbound-gateway>
+                                               encode-uri="false"
+                                               url="${url.inbound.storage.update.teller}"
+                                               http-method="PUT"
+                                               header-mapper="headerMapper">
+        <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
+        <int-http:uri-variable name="blobName" expression="headers.blobName"/>
+        <int-http:request-handler-advice-chain>
+            <ref bean="rollbackAdvice"/>
+        </int-http:request-handler-advice-chain>
+    </int-http:outbound-gateway>
     </int:chain>
 
 </beans>

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -12,17 +13,13 @@
 		http://www.springframework.org/schema/integration
 		http://www.springframework.org/schema/integration/spring-integration.xsd
 		http://www.springframework.org/schema/integration/sftp
-		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd
-        http://www.springframework.org/schema/integration/http
-        http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
+		http://www.springframework.org/schema/integration/sftp/spring-integration-sftp.xsd">
 
     <import resource="classpath:integration-config/outbound/ledger-outbound-integration-config.xml"/>
 
     <import resource="classpath:integration-config/outbound/invoice-outbound-integration-config.xml"/>
 
     <import resource="classpath:integration-config/outbound/promatch-outbound-integration-config.xml"/>
-
-    <!-- Channels -->
 
     <int:channel id="outbound-filter-channel"/>
 
@@ -64,7 +61,7 @@
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
-    <int:splitter ref="outboundSplitter" input-channel="outbound-spliter-channel" output-channel="outbound-sftp-channel"/>
+    <int:splitter ref="outboundSplitter" input-channel="outbound-spliter-channel" output-channel="outbound-sftp-channel"></int:splitter>
 
     <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
                                        channel="outbound-sftp-channel" charset="UTF-8" remote-directory="/Producer"
@@ -84,7 +81,7 @@
     <int:service-activator input-channel="outbound-archival-reply-channel" ref="outboundArchiveResponseHandler"/>
 
     <!-- BEAN DEFIITION -->
-    <bean id="customOutboundRouter" class="no.sample.exchange.outbound.router.OutboundSourceTypeRouter">
+    <bean id="customOutboundRouter" class="no.vipps.exchange.outbound.router.OutboundSourceTypeRouter">
         <property name="sourceTypePrefixChannelMap" >
             <util:map>
                 <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
@@ -95,7 +92,7 @@
         <property name="type" value="list"/>
     </bean>
 
-    <bean id="customOutboundArchivalRouter" class="no.sample.exchange.outbound.router.OutboundSourceTypeRouter">
+    <bean id="customOutboundArchivalRouter" class="no.vipps.exchange.outbound.router.OutboundSourceTypeRouter">
         <property name="sourceTypePrefixChannelMap">
             <util:map>
                 <entry key="ledger" value-ref="outbound-ledger-archiver-channel"/>

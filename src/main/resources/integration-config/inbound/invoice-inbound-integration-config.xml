@@ -14,9 +14,18 @@
         http://www.springframework.org/schema/integration/http
         http://www.springframework.org/schema/integration/http/spring-integration-http.xsd">
 
-    <int:channel id="invoice-storage-http-request-channel"/>
+    <int:channel id="invoice-inbound-storage-http-request-channel"/>
 
-    <int:chain input-channel="invoice-storage-http-request-channel" output-channel="storage-http-reply-channel">
+    <int:channel id="invoice-inbound-storage-rename-transformer-channel"/>
+
+    <int:transformer input-channel="invoice-inbound-storage-rename-transformer-channel" output-channel="invoice-inbound-storage-http-request-channel" ref="invoiceInboundRenameTransformer"/>
+
+    <bean id="invoiceInboundRenameTransformer" class="no.vipps.exchange.inbound.transformer.InboundRenameTransformer">
+        <property name="suffix" value=""/>
+        <property name="prefix" value=""/>
+    </bean>
+
+    <int:chain input-channel="invoice-inbound-storage-http-request-channel" output-channel="storage-http-reply-channel">
         <int:transformer ref="inboundStrorageRequestTransformer"/>
         <int-http:outbound-gateway id="gateway"
                                    encode-uri="false"
