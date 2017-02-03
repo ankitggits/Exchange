@@ -30,7 +30,7 @@
                                    header-mapper="headerMapper"
                                    reply-timeout="50000"
                                    expected-response-type="no.vipps.exchange.outbound.model.EnumerationResults">
-
+            <int-http:uri-variable name="storage.connection.string" expression="@configurationService.getStorageConnectionString()"/>
             <int-http:uri-variable name="ssh-string-list" expression="@configurationService.getSshStringForList()"/>
         </int-http:outbound-gateway>
     </int:chain>
@@ -49,6 +49,7 @@
                                    url="${url.outbound.storage.update.archive.ledger}"
                                    http-method="PUT"
                                    header-mapper="headerMapper">
+            <int-http:uri-variable name="storage.connection.string" expression="@configurationService.getStorageConnectionString()"/>
             <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
             <int-http:uri-variable name="blobName" expression="headers.blobName"/>
         </int-http:outbound-gateway>
@@ -57,6 +58,7 @@
                                    url="${url.outbound.storage.delete.ledger}"
                                    http-method="DELETE"
                                    header-mapper="headerMapper">
+            <int-http:uri-variable name="storage.connection.string" expression="@configurationService.getStorageConnectionString()"/>
             <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
             <int-http:uri-variable name="blobName" expression="headers.blobName"/>
         </int-http:outbound-gateway>

@@ -10,9 +10,11 @@ import org.springframework.stereotype.Component;
 @Component("configurationService")
 public class ConfiguraitonService {
 
-    @Value("${storage.ssh-string}")
+    @Value("${storage.ssh.string}")
     private String sshString;
 
+    @Value("${storage.connection.string}")
+    private String storageConnectionString;
 
     public String getSshString(){
         return sshString;
@@ -22,4 +24,7 @@ public class ConfiguraitonService {
         return "restype=container&comp=list&".concat(getSshString());
     }
 
+    public String getStorageConnectionString() {
+        return storageConnectionString;
+    }
 }

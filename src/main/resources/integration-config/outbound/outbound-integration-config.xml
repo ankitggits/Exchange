@@ -27,12 +27,6 @@
 
     <int:channel id="outbound-enricher-channel"/>
 
-    <!--<int:channel id="outbound-router-channel">
-        <int:interceptors>
-            <int:wire-tap channel="loggingChannel"/>
-        </int:interceptors>
-    </int:channel>-->
-
     <int:channel id="blob-ledger-transformer-channel"/>
 
     <int:channel id="blob-invoice-transformer-channel"/>
@@ -49,15 +43,11 @@
 
     <int:channel id="outbound-archival-reply-channel"/>
 
-    <!-- Components-->
-
     <int:filter input-channel="outbound-filter-channel" output-channel="outbound-enricher-channel" ref="blobPresenceSelector"/>
 
     <int:transformer input-channel="outbound-enricher-channel" output-channel="outbound-logger-channel" ref="blobEnricherTransformer"/>
 
     <int:transformer input-channel="outbound-logger-channel" output-channel="outbound-router-channel" ref="outboundLoggingService"/>
-
-    <!--<int:logging-channel-adapter id="loggingChannel" expression="'Value of header foo_bar: '.concat(headers)" level="INFO"/>-->
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
@@ -95,9 +85,9 @@
     <bean id="customOutboundArchivalRouter" class="no.vipps.exchange.outbound.router.OutboundSourceTypeRouter">
         <property name="sourceTypePrefixChannelMap">
             <util:map>
-                <entry key="ledger" value-ref="outbound-ledger-archiver-channel"/>
-                <entry key="invoice" value-ref="outbound-invoice-archiver-channel"/>
-                <entry key="promatch" value-ref="outbound-promatch-archiver-channel"/>
+                <entry key="${prefix.match.outbound.ledger}" value-ref="outbound-ledger-archiver-channel"/>
+                <entry key="${prefix.match.outbound.invoice}" value-ref="outbound-invoice-archiver-channel"/>
+                <entry key="${prefix.match.outbound.promatch}" value-ref="outbound-promatch-archiver-channel"/>
             </util:map>
         </property>
         <property name="type" value="blob"/>

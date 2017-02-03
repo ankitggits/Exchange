@@ -32,6 +32,7 @@
                                    url="${url.inbound.storage.update.invoice}"
                                    http-method="PUT"
                                    header-mapper="headerMapper">
+            <int-http:uri-variable name="storage.connection.string" expression="@configurationService.getStorageConnectionString()"/>
             <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
             <int-http:uri-variable name="blobName" expression="headers.blobName"/>
             <int-http:request-handler-advice-chain>
