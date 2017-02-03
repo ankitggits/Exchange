@@ -1,5 +1,7 @@
 package no.vipps.exchange.inbound.handler;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -15,12 +17,11 @@ import org.springframework.web.client.HttpClientErrorException;
 /**
  * Created by AB75448 on 02.02.2017.
  */
-@Component("rollbackAdvice")
+@Getter
+@Setter
 public class MFTRollbackAdvice extends AbstractRequestHandlerAdvice {
 
-    @Autowired
-    @Qualifier("inbound-sftp-rollback-channel")
-    MessageChannel messageChannel;
+    private MessageChannel messageChannel;
 
     @Override
     protected Object doInvoke(ExecutionCallback callback, Object target, Message<?> message) throws Exception {

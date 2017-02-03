@@ -28,7 +28,7 @@ public class BlobStorageService {
         try {
             ResponseEntity<byte[]> entity = restTemplate.exchange(new URI(url), HttpMethod.GET, null,byte[].class);
             resourceInfo.setBytes(entity.getBody());
-            resourceInfo.setBlobMetadata(new ResourceInfo.BlobMeta(blobName));
+            resourceInfo.setResourceMetadata(new ResourceInfo.ResourceMeta(blobName));
             return resourceInfo;
         } catch (URISyntaxException e) {
             e.printStackTrace();

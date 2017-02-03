@@ -1,5 +1,6 @@
 package no.vipps.exchange.inbound.router;
 
+import no.vipps.exchange.common.model.ResourceInfo;
 import org.springframework.integration.annotation.Router;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -19,7 +20,8 @@ public class InboundSourceTypeRouter {
     @Router
     public MessageChannel route(Message message) {
         MessageChannel messageChannel = null;
-        String fileName = (String) message.getHeaders().get("file_remoteFile");
+        ResourceInfo resourceInfo = (ResourceInfo) message.getPayload();
+        String fileName = resourceInfo.getResourceMetadata().getFileName();
         Iterator<String> iterator = sourceTypePrefixChannelMap.keySet().iterator();
         while(iterator.hasNext()){
             String prefix = iterator.next();

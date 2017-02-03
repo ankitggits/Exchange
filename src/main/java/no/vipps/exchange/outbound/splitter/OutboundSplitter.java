@@ -24,7 +24,9 @@ public class OutboundSplitter extends AbstractMessageSplitter{
         Iterator<ResourceInfo> blobInfoIterator = resourceInfos.iterator();
         while(blobInfoIterator.hasNext()) {
             ResourceInfo resourceInfo = blobInfoIterator.next();
-            messages.add(MessageBuilder.withPayload(resourceInfo.getBytes()).setHeader(FileHeaders.FILENAME, resourceInfo.getBlobMetadata().getBlobName()).build());
+            messages.add(MessageBuilder.withPayload(resourceInfo.getBytes())
+                    .setHeader(FileHeaders.FILENAME, resourceInfo.getResourceMetadata().getFileName())
+                    .setHeader("sourceFilename", resourceInfo.getResourceMetadata().getBlobName()).build());
         }
         return messages;
     }

@@ -27,11 +27,11 @@ public class OutboundRenameTransformer extends AbstractTransformer{
         Iterator<ResourceInfo> blobInfoIterator = resourceInfos.iterator();
         while(blobInfoIterator.hasNext()){
             ResourceInfo resourceInfo = blobInfoIterator.next();
-            String blobName = resourceInfo.getBlobMetadata().getBlobName();
+            String blobName = resourceInfo.getResourceMetadata().getBlobName();
             String extension = FilenameUtils.getExtension(blobName);
             String blobNameWithOutExt = FilenameUtils.removeExtension(blobName);
-            resourceInfo.getBlobMetadata().setExtension(extension);
-            resourceInfo.getBlobMetadata().setFileName(prefix.concat(blobNameWithOutExt.concat(suffix).concat(".").concat(extension)));
+            resourceInfo.getResourceMetadata().setExtension(extension);
+            resourceInfo.getResourceMetadata().setFileName(prefix.concat(blobNameWithOutExt.concat(suffix).concat(".").concat(extension)));
         }
         return MessageBuilder.withPayload(resourceInfos).build();
     }

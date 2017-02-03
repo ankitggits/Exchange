@@ -26,9 +26,9 @@ public class OutboundSourceTypeRouter {
         MessageChannel messageChannel = null;
         String blobName = null;
         if(("list").equalsIgnoreCase(type)){
-            blobName = ((List<ResourceInfo>) message.getPayload()).get(0).getBlobMetadata().getBlobName();
+            blobName = ((List<ResourceInfo>) message.getPayload()).get(0).getResourceMetadata().getBlobName();
         }else{
-            blobName = (String) ((AdviceMessage)message).getInputMessage().getHeaders().get("file_name");
+            blobName = (String) message.getPayload();
         }
         Iterator<String> iterator = sourceTypePrefixChannelMap.keySet().iterator();
         while(iterator.hasNext()){

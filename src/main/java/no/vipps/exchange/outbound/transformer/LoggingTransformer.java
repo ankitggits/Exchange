@@ -16,10 +16,10 @@ public class LoggingTransformer extends AbstractTransformer{
 
     public Message<?> doTransform(Message message){
         List<ResourceInfo> resourceInfos = (List<ResourceInfo>) message.getPayload();
-        Iterator<ResourceInfo> blobInfoIterator = resourceInfos.iterator();
-        while(blobInfoIterator.hasNext()){
-            ResourceInfo resourceInfo = blobInfoIterator.next();
-            System.out.println("received a file with name:::"+ resourceInfo.getBlobMetadata().getBlobName());
+        Iterator<ResourceInfo> resourceInfoIterator = resourceInfos.iterator();
+        while(resourceInfoIterator.hasNext()){
+            ResourceInfo resourceInfo = resourceInfoIterator.next();
+            System.out.println("received a file with name:::"+ resourceInfo.getResourceMetadata().getBlobName());
         }
         return message;
     }

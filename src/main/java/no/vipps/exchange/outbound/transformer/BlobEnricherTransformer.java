@@ -29,7 +29,7 @@ public class BlobEnricherTransformer extends AbstractTransformer{
         while(blobsIterator.hasNext()){
             EnumerationResults.Blobs.Blob blob = blobsIterator.next();
             ResourceInfo resourceInfo = storageService.getBlob(results.getServiceEndpoint(), results.getContainerName(), blob.getName());
-            resourceInfo.getBlobMetadata().setUploadedDate(blob.getProperties().getLastModified());
+            resourceInfo.getResourceMetadata().setUploadedDate(blob.getProperties().getLastModified());
             resourceInfos.add(resourceInfo);
         }
         return MessageBuilder.withPayload(resourceInfos).build();

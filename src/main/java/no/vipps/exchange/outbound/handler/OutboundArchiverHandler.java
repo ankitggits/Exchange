@@ -17,8 +17,9 @@ public class OutboundArchiverHandler extends AbstractMessageHandler{
         System.out.println("File is getting archived::"+ fileName);
     }
 
-    public void handle(String fileName){
+    public String handle(String fileName){
         System.out.println("File is getting archived::"+ fileName);
+        return fileName;
     }
 
 }

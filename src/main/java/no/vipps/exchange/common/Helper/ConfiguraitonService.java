@@ -1,5 +1,7 @@
 package no.vipps.exchange.common.Helper;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -8,9 +10,12 @@ import org.springframework.stereotype.Component;
 @Component("configurationService")
 public class ConfiguraitonService {
 
+    @Value("${storage.ssh-string}")
+    private String sshString;
+
 
     public String getSshString(){
-        return "sv=2015-12-11&ss=b&srt=sco&sp=rwdlac&se=2017-08-31T00:33:00Z&st=2017-01-02T13:33:00Z&spr=https&sig=Olbe3hpDZWRmorvOtybne2WuQdwXfgd7UwslF%2Bm%2BX8A%3D";
+        return sshString;
     }
 
     public String getSshStringForList(){

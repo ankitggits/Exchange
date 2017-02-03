@@ -27,11 +27,11 @@
 
     <int:channel id="outbound-enricher-channel"/>
 
-    <int:channel id="outbound-router-channel">
+    <!--<int:channel id="outbound-router-channel">
         <int:interceptors>
             <int:wire-tap channel="loggingChannel"/>
         </int:interceptors>
-    </int:channel>
+    </int:channel>-->
 
     <int:channel id="blob-ledger-transformer-channel"/>
 
@@ -57,14 +57,14 @@
 
     <int:transformer input-channel="outbound-logger-channel" output-channel="outbound-router-channel" ref="outboundLoggingService"/>
 
-    <int:logging-channel-adapter id="loggingChannel" expression="'Value of header foo_bar: '.concat(headers)" level="INFO"/>
+    <!--<int:logging-channel-adapter id="loggingChannel" expression="'Value of header foo_bar: '.concat(headers)" level="INFO"/>-->
 
     <int:router input-channel="outbound-router-channel" ref="customOutboundRouter"/>
 
     <int:splitter ref="outboundSplitter" input-channel="outbound-spliter-channel" output-channel="outbound-sftp-channel"></int:splitter>
 
     <int-sftp:outbound-channel-adapter id="sftpOutboundAdapter" session-factory="sftpSessionFactory"
-                                       channel="outbound-sftp-channel" charset="UTF-8" remote-directory="/Producer"
+                                       channel="outbound-sftp-channel" charset="UTF-8" remote-directory="${sftp.outbound}"
                                        remote-file-separator="/" order="1">
         <int-sftp:request-handler-advice-chain>
             <bean class="org.springframework.integration.handler.advice.ExpressionEvaluatingRequestHandlerAdvice">
@@ -84,9 +84,9 @@
     <bean id="customOutboundRouter" class="no.vipps.exchange.outbound.router.OutboundSourceTypeRouter">
         <property name="sourceTypePrefixChannelMap" >
             <util:map>
-                <entry key="ledger" value-ref="blob-ledger-transformer-channel"/>
-                <entry key="invoice" value-ref="blob-invoice-transformer-channel"/>
-                <entry key="promatch" value-ref="blob-promatch-transformer-channel"/>
+                <entry key="${prefix.match.outbound.ledger}" value-ref="blob-ledger-transformer-channel"/>
+                <entry key="${prefix.match.outbound.invoice}" value-ref="blob-invoice-transformer-channel"/>
+                <entry key="${prefix.match.outbound.promatch}" value-ref="blob-promatch-transformer-channel"/>
             </util:map>
         </property>
         <property name="type" value="list"/>

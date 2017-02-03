@@ -6,10 +6,10 @@ package no.vipps.exchange.common.model;
 public class ResourceInfo {
 
     private byte[] bytes;
-    private BlobMeta blobMetadata;
+    private ResourceMeta resourceMetadata;
 
-    public BlobMeta getBlobMetadata() {
-        return blobMetadata;
+    public ResourceMeta getResourceMetadata() {
+        return resourceMetadata;
     }
 
     public void setBytes(byte[] bytes) {
@@ -20,23 +20,24 @@ public class ResourceInfo {
         return bytes;
     }
 
-    public void setBlobMetadata(BlobMeta blobMetadata) {
-        this.blobMetadata = blobMetadata;
+    public void setResourceMetadata(ResourceMeta resourceMetadata) {
+        this.resourceMetadata = resourceMetadata;
     }
 
-    public static class BlobMeta {
+    public static class ResourceMeta {
         private String blobName;
         private String extension;
         private String fileName;
         private String uploadedDate;
 
-        public BlobMeta(String blobName){
-            this.blobName=blobName;
-            this.fileName=blobName;
+        public ResourceMeta(String resourceName){
+            this.blobName=resourceName;
+            this.fileName=resourceName;
         }
 
-        public BlobMeta(String blobName,String uploadedDate){
-            this.blobName=blobName;
+        public ResourceMeta(String resourceName, String uploadedDate){
+            this.blobName=resourceName;
+            this.fileName=resourceName;
             this.uploadedDate=uploadedDate;
         }
 

@@ -2,6 +2,7 @@ package no.vipps.exchange.inbound.transformer;
 
 import lombok.Getter;
 import lombok.Setter;
+import no.vipps.exchange.common.model.ResourceInfo;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.transformer.AbstractTransformer;
@@ -19,15 +20,14 @@ public class InboundRenameTransformer extends AbstractTransformer {
     private String prefix;
 
     @Override
-    protected Message<?> doTransform(Message<?> message) throws Exception {
-        MessageHeaders messageHeaders = message.getHeaders();
-        String fileName = (String) messageHeaders.get("file_remoteFile");
-        String extension = FilenameUtils.getExtension(fileName);
-        String fileNameWithOutExt = FilenameUtils.removeExtension(fileName);
+    protected Message<ResourceInfo> doTransform(Message<?> message) throws Exception {
+        ResourceInfo resourceInfo = (ResourceInfo) message.getPayload();
+        String blobName = resourceInfo.getResourceMetadata().getBlobName();
+        String extension = FilenameUtils.getExtension(blobName);
+        String fileNameWithOutExt = FilenameUtils.removeExtension(blobName);
+        resourceInfo.getResourceMetadata().setBlobName(prefix.concat(fileNameWithOutExt.concat(suffix).concat(".").concat(extension)));
         return MessageBuilder
-                .withPayload(message.getPayload())
-                .setHeader("file_remoteFile", fileName)
-                .setHeader("blobname", prefix.concat(fileNameWithOutExt.concat(suffix).concat(".").concat(extension)))
+                .withPayload(resourceInfo)
                 .build();
     }
 

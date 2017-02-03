@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import static no.vipps.exchange.common.util.ExchangeUtil.getCurrentDateAsString;
+
 /**
  * Created by AB75448 on 20.12.2016.
  */
@@ -23,18 +25,21 @@ public class OutboundStrorageRequestTransformer extends AbstractTransformer{
 
     @Override
     protected Message doTransform(Message<?> message) throws Exception{
-        String blobName = (String) ((AdviceMessage)message).getInputMessage().getHeaders().get("file_name");
-        return MessageBuilder.withPayload(blobName)
+        Message originalMessage = ((AdviceMessage)message).getInputMessage();
+        String blobName = (String) originalMessage.getHeaders().get("sourceFilename");
+        return MessageBuilder.withPayload(originalMessage.getPayload())
+                .setHeader("Content-Type", "application/octet-stream")
                 .setHeader("version","2015-02-21")
-                .setHeader("date" , getCurrentDateAsString())
+                .setHeader("date",getCurrentDateAsString())
+                .setHeader("blob-content-disposition","attachment; filename='"+blobName)
+                .setHeader("blob-type","BlockBlob")
+                .setHeader("blobName",blobName)
+                .setHeader("charset", "binary")
                 .build();
 
+
     }
 
-    private static String getCurrentDateAsString() throws ParseException {
-        SimpleDateFormat dateFormatGmt = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.ENGLISH);
-        dateFormatGmt.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return dateFormatGmt.format(new Date());
-    }
+
 
 }

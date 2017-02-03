@@ -13,7 +13,7 @@
     <int:channel id="storage-invoice-request-channel"/>
 
     <int:inbound-channel-adapter channel="storage-invoice-request-channel" expression="''">
-        <int:poller fixed-delay="9000"></int:poller>
+        <int:poller fixed-delay="${frequency.outbound.invoice}"></int:poller>
     </int:inbound-channel-adapter>
 
     <int:chain input-channel="storage-invoice-request-channel" output-channel="outbound-filter-channel">
@@ -38,15 +38,23 @@
     <int:transformer input-channel="blob-invoice-transformer-channel" output-channel="outbound-spliter-channel" ref="invoiceFileNameTransformer"/>
 
     <bean id="invoiceFileNameTransformer" class="no.vipps.exchange.outbound.transformer.OutboundRenameTransformer">
-        <property name="suffix" value="-invoice-hello"/>
-        <property name="prefix" value=""/>
+        <property name="suffix" value="${rename.outbound.invoice.suffix}"/>
+        <property name="prefix" value="${rename.outbound.invoice.prefix}"/>
     </bean>
 
     <int:chain input-channel="outbound-invoice-archiver-channel" output-channel="outbound-archival-reply-channel">
         <int:transformer ref="outboundStrorageRequestTransformer"/>
+        <int-http:outbound-gateway id="gateway"
+                                   encode-uri="false"
+                                   url="${url.outbound.storage.update.archive.invoice}"
+                                   http-method="PUT"
+                                   header-mapper="headerMapper">
+            <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
+            <int-http:uri-variable name="blobName" expression="headers.blobName"/>
+        </int-http:outbound-gateway>
         <int-http:outbound-gateway id="archivalGateway"
                                    encode-uri="false"
-                                   url="${url.outbound.storage.delete.ledger}"
+                                   url="${url.outbound.storage.delete.invoice}"
                                    http-method="DELETE"
                                    header-mapper="headerMapper">
             <int-http:uri-variable name="ssh-string" expression="@configurationService.getSshString()"/>
